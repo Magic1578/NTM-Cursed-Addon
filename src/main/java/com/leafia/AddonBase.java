@@ -1,10 +1,13 @@
 package com.leafia;
 
 import com.hbm.handler.GuiHandler;
+import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.potion.LeafiaPotion;
+import com.leafia.dev.NTMFNBT;
 import com.leafia.init.*;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.proxy.LeafiaServerProxy;
@@ -14,6 +17,7 @@ import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -131,6 +135,14 @@ public class AddonBase {
     @EventHandler
     public void fMLLoadCompleteEvent(FMLLoadCompleteEvent evt){
         proxy.onLoadComplete(evt);
+        /*
+        FluidTankNTM tankNTM = new FluidTankNTM(Fluids.CRYOGEL,1000);
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString("Hello","World!");
+        NTMFNBT.setNBT(tankNTM,nbt);
+
+        NBTTagCompound compound = NTMFNBT.getNBT(tankNTM);
+        System.out.println(compound.getString("Hello"));*/
     }
 
     @EventHandler
