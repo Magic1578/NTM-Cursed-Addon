@@ -30,20 +30,22 @@ public class MixinJEIConfig {
 
 		for (IRecipeCategory<Recipe> category : addon_categories)
 			instance.addRecipeCategories(category);
-		try {
-			instance.addRecipeCategories(iRecipeCategories);
-		} catch (IllegalArgumentException iarg) {
-			String message = iarg.getMessage();
-			String category = message.split("\"")[1];
-			boolean okay = false;
-			for (IRecipeCategory<Recipe> addonCategory : addon_categories) {
-				if (addonCategory.getUid().equals(category)) {
-					okay = true;
-					break;
+		for (IRecipeCategory cat : iRecipeCategories) {
+			try {
+				instance.addRecipeCategories(cat); // meow
+			} catch (IllegalArgumentException iarg) {
+				String message = iarg.getMessage();
+				String category = message.split("\"")[1];
+				boolean okay = false;
+				for (IRecipeCategory<Recipe> addonCategory : addon_categories) {
+					if (addonCategory.getUid().equals(category)) {
+						okay = true;
+						break;
+					}
 				}
+				if (!okay)
+					throw iarg;
 			}
-			if (!okay)
-				throw iarg;
 		}
 	}
 
