@@ -1,13 +1,8 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
-import com.hbm.handler.jei.AssemblyMachineRecipeHandler;
-import com.hbm.handler.jei.CentrifugeRecipeHandler;
-import com.hbm.handler.jei.ChemicalPlantRecipeHandler;
-import com.hbm.handler.jei.JEIConfig;
-import com.leafia.jei.JEIAssembler;
-import com.leafia.jei.JEICentrifuge;
+import com.hbm.handler.jei.*;
+import com.leafia.jei.*;
 import com.leafia.jei.JEICentrifuge.Recipe;
-import com.leafia.jei.JEIChemplant;
 import com.llamalad7.mixinextras.sugar.Local;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -27,12 +22,24 @@ public class MixinJEIConfig {
 		addon_categories.add(new JEICentrifuge(help));
 		addon_categories.add(new JEIChemplant(help));
 		addon_categories.add(new JEIAssembler(help));
+		addon_categories.add(new JEIRefinery(help));
+		addon_categories.add(new JEIVacuum(help));
+		addon_categories.add(new JEICracking(help));
 
 		for (IRecipeCategory<Recipe> category : addon_categories)
 			instance.addRecipeCategories(category);
 		for (IRecipeCategory cat : iRecipeCategories) {
-			try {
+			boolean doNotAdd = false;
+			for (IRecipeCategory<Recipe> addonCategory : addon_categories) {
+				if (addonCategory.getUid().equals(cat.getUid())) {
+					doNotAdd = true;
+					break;
+				}
+			}
+			if (!doNotAdd)
 				instance.addRecipeCategories(cat); // meow
+			//try {
+				/*
 			} catch (IllegalArgumentException iarg) {
 				String message = iarg.getMessage();
 				String category = message.split("\"")[1];
@@ -45,7 +52,7 @@ public class MixinJEIConfig {
 				}
 				if (!okay)
 					throw iarg;
-			}
+			}*/ // this is retarded
 		}
 	}
 
@@ -60,5 +67,17 @@ public class MixinJEIConfig {
 	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/AssemblyMachineRecipeHandler;getRecipes()Ljava/util/List;"))
 	public List assembler(AssemblyMachineRecipeHandler instance) {
 		return JEIAssembler.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/JeiRecipes;getRefineryRecipe()Ljava/util/List;"))
+	public List refinery() {
+		return JEIRefinery.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/VacuumRecipeHandler;getRecipes()Ljava/util/List;"))
+	public List vacuum(VacuumRecipeHandler instance) {
+		return JEIVacuum.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/CrackingHandler;getRecipes()Ljava/util/List;"))
+	public List cracking(CrackingHandler instance) {
+		return JEICracking.Recipe.buildRecipes();
 	}
 }

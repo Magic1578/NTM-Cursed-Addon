@@ -1,0 +1,129 @@
+package com.leafia.jei;
+
+import com.hbm.blocks.ModBlocks;
+import com.hbm.handler.jei.JEIConfig;
+import com.hbm.inventory.fluid.FluidStack;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.recipes.RefineryRecipes;
+import com.hbm.items.machine.ItemFluidIcon;
+import com.hbm.util.I18nUtil;
+import com.hbm.util.Tuple;
+import com.hbm.util.Tuple.Quartet;
+import com.hbm.util.Tuple.Quintet;
+import com.leafia.dev.LeafiaClientUtil;
+import com.leafia.jei.JEIVacuum.Recipe;
+import com.llib.exceptions.LeafiaDevFlaw;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.gui.*;
+import mezz.jei.api.gui.IDrawableAnimated.StartDirection;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeCategory;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class JEIVacuum implements IRecipeCategory<Recipe> {
+	public static final ResourceLocation gui_rl
+			= new ResourceLocation("leafia","textures/gui/jei/refinery_vacuum.png");
+	static final Map<FluidType, Quartet<FluidStack, FluidStack, FluidStack, FluidStack>> vacRecipes;
+	static {
+		try {
+			Field f = RefineryRecipes.class.getDeclaredField("vacuum");
+			f.setAccessible(true);
+			Object bruh = f.get(null);
+			vacRecipes = (Map<FluidType, Tuple.Quartet<FluidStack, FluidStack, FluidStack, FluidStack>>)bruh;
+		} catch (NoSuchFieldException | IllegalAccessException | ClassCastException exception) {
+			throw new LeafiaDevFlaw(exception);
+		}
+	}
+
+	public static class Recipe implements IRecipeWrapper {
+		public static final List<Recipe> recipes = new ArrayList<>();
+		public static List<Recipe> buildRecipes() {
+			for (Entry<FluidType,Quartet<FluidStack,FluidStack,FluidStack,FluidStack>> entry : vacRecipes.entrySet()) {
+				recipes.add(new Recipe(entry.getKey(),entry.getValue()));
+			}
+			return recipes;
+		}
+
+		final FluidStack inputFluid;
+		final List<FluidStack> outputFluid;
+		public Recipe(FluidType in,Quartet<FluidStack, FluidStack, FluidStack, FluidStack> out) {
+			inputFluid = new FluidStack(in,1000);
+			outputFluid = new ArrayList<>();
+			outputFluid.add(out.getW());
+			outputFluid.add(out.getX());
+			outputFluid.add(out.getY());
+			outputFluid.add(out.getZ());
+		}
+
+		@Override
+		public void getIngredients(IIngredients ingredients) {
+			ingredients.setInput(VanillaTypes.ITEM,ItemFluidIcon.make(inputFluid));
+			List<ItemStack> outs = new ArrayList<>();
+			// for searching
+			for (FluidStack f : outputFluid)
+				outs.add(ItemFluidIcon.make(f));
+
+			ingredients.setOutputs(VanillaTypes.ITEM,outs);
+		}
+		@SideOnly(Side.CLIENT)
+		@Override
+		public void drawInfo(Minecraft minecraft,int recipeWidth,int recipeHeight,int mouseX,int mouseY) {
+			List<FluidStack> stacks = new ArrayList<>();
+			stacks.add(inputFluid);
+			stacks.addAll(outputFluid);
+			LeafiaClientUtil.jeiFluidRenderTank(stacks,inputFluid,37,1,16,34,false);
+			for (int i = 0; i < outputFluid.size(); i++)
+				LeafiaClientUtil.jeiFluidRenderTank(stacks,outputFluid.get(i),73+i*18,1,16,34,false);
+		}
+		@SideOnly(Side.CLIENT)
+		@Override
+		public List<String> getTooltipStrings(int mouseX,int mouseY) {
+			List<String> list = new ArrayList<>();
+			LeafiaClientUtil.jeiFluidRenderInfo(inputFluid,list,mouseX,mouseY,37,1,16,34);
+			for (int i = 0; i < outputFluid.size(); i++) {
+				FluidStack stack = outputFluid.get(i);
+				LeafiaClientUtil.jeiFluidRenderInfo(stack,list,mouseX,mouseY,73+i*18,1,16,34);
+			}
+			return list;
+		}
+	}
+
+	protected final IDrawable background;
+	protected final IDrawableStatic powerStatic;
+	protected final IDrawableAnimated powerAnimated;
+	public JEIVacuum(IGuiHelper help) {
+		this.background = help.createDrawable(gui_rl,6,15,163,55-18);
+		powerStatic = help.createDrawable(gui_rl, 176, 0, 16, 34);
+		powerAnimated = help.createAnimatedDrawable(powerStatic, 480, StartDirection.TOP, true);
+	}
+
+	@Override public String getUid() { return JEIConfig.VACUUM; }
+	@Override public String getTitle() {
+		return I18nUtil.resolveKey(ModBlocks.machine_vacuum_distill.getTranslationKey()+".name");
+	}
+	@Override public String getModName() { return "hbm"; }
+	@Override public IDrawable getBackground() { return background; }
+
+	@Override
+	public void drawExtras(Minecraft minecraft) {
+		powerAnimated.draw(minecraft,2,2);
+	}
+
+	@Override
+	public void setRecipe(IRecipeLayout recipeLayout,Recipe recipeWrapper,IIngredients ingredients) {
+		IGuiItemStackGroup stacks = recipeLayout.getItemStacks();
+		stacks.set(ingredients);
+	}
+}

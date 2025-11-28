@@ -9,7 +9,7 @@ public class LeafiaDevFlaw extends RuntimeException {
         appendStackTrace(e);
     }
     public LeafiaDevFlaw(Exception e) {
-        this(e.getMessage());
+        this(e.toString());
         appendStackTrace(e);
     }
     public LeafiaDevFlaw appendStackTrace(Exception e) {
