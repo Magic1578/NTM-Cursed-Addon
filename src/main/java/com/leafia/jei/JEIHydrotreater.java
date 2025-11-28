@@ -5,12 +5,13 @@ import com.hbm.handler.jei.JEIConfig;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.recipes.CrackingRecipes;
+import com.hbm.inventory.recipes.HydrotreatingRecipes;
 import com.hbm.items.machine.ItemFluidIcon;
 import com.hbm.util.I18nUtil;
-import com.hbm.util.Tuple.Pair;
+import com.hbm.util.Tuple.Triplet;
 import com.leafia.dev.LeafiaClientUtil;
-import com.leafia.jei.JEICracking.Recipe;
+import com.leafia.jei.JEIHydrotreater.Recipe;
+import com.llib.exceptions.LeafiaDevFlaw;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.gui.IDrawableAnimated.StartDirection;
@@ -25,18 +26,31 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class JEICracking implements IRecipeCategory<Recipe> {
+public class JEIHydrotreater implements IRecipeCategory<Recipe> {
 	public static final ResourceLocation gui_rl
-			= new ResourceLocation("leafia","textures/gui/jei/cracking.png");
+			= new ResourceLocation("leafia","textures/gui/jei/hydrotreater.png");
+	static final HashMap<FluidType, Triplet<FluidStack, FluidStack, FluidStack>> hydroRecipes;
+	static {
+		try {
+			Field f = HydrotreatingRecipes.class.getDeclaredField("recipes");
+			f.setAccessible(true);
+			Object bruh = f.get(null);
+			hydroRecipes = (HashMap<FluidType, Triplet<FluidStack, FluidStack, FluidStack>>)bruh;
+		} catch (NoSuchFieldException | IllegalAccessException | ClassCastException exception) {
+			throw new LeafiaDevFlaw(exception);
+		}
+	}
 
 	public static class Recipe implements IRecipeWrapper {
 		public static final List<Recipe> recipes = new ArrayList<>();
 		public static List<Recipe> buildRecipes() {
-			for (Entry<FluidType,Pair<FluidStack,FluidStack>> entry : CrackingRecipes.cracking.entrySet()) {
+			for (Entry<FluidType,Triplet<FluidStack,FluidStack,FluidStack>> entry : hydroRecipes.entrySet()) {
 				recipes.add(new Recipe(entry.getKey(),entry.getValue()));
 			}
 			return recipes;
@@ -44,12 +58,11 @@ public class JEICracking implements IRecipeCategory<Recipe> {
 
 		final List<FluidStack> inputFluid = new ArrayList<>();
 		final List<FluidStack> outputFluid = new ArrayList<>();
-		public Recipe(FluidType in,Pair<FluidStack,FluidStack> out) {
-			inputFluid.add(new FluidStack(in,100));
-			inputFluid.add(new FluidStack(Fluids.STEAM,200));
-			outputFluid.add(out.key);
-			outputFluid.add(out.value);
-			outputFluid.add(new FluidStack(Fluids.SPENTSTEAM,2));
+		public Recipe(FluidType in,Triplet<FluidStack, FluidStack, FluidStack> fluids) {
+			inputFluid.add(fluids.getX());
+			inputFluid.add(new FluidStack(in,1000));
+			outputFluid.add(fluids.getY());
+			outputFluid.add(fluids.getZ());
 		}
 		static ItemStack makeIcon(FluidStack stack) {
 			if (stack.type.equals(Fluids.NONE))
@@ -100,15 +113,15 @@ public class JEICracking implements IRecipeCategory<Recipe> {
 	protected final IDrawable background;
 	protected final IDrawableStatic powerStatic;
 	protected final IDrawableAnimated powerAnimated;
-	public JEICracking(IGuiHelper help) {
-		this.background = help.createDrawable(gui_rl,6,15,163-18,55-18);
+	public JEIHydrotreater(IGuiHelper help) {
+		this.background = help.createDrawable(gui_rl,6,15,163-18*2,55-18);
 		powerStatic = help.createDrawable(gui_rl, 176, 0, 16, 34);
 		powerAnimated = help.createAnimatedDrawable(powerStatic, 480, StartDirection.TOP, true);
 	}
 
-	@Override public String getUid() { return JEIConfig.CRACKING; }
+	@Override public String getUid() { return JEIConfig.HYDROTREATING; }
 	@Override public String getTitle() {
-		return I18nUtil.resolveKey(ModBlocks.machine_catalytic_cracker.getTranslationKey()+".name");
+		return I18nUtil.resolveKey(ModBlocks.machine_hydrotreater.getTranslationKey()+".name");
 	}
 	@Override public String getModName() { return "hbm"; }
 	@Override public IDrawable getBackground() { return background; }

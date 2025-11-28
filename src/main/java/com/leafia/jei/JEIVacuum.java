@@ -104,7 +104,7 @@ public class JEIVacuum implements IRecipeCategory<Recipe> {
 	protected final IDrawableStatic powerStatic;
 	protected final IDrawableAnimated powerAnimated;
 	public JEIVacuum(IGuiHelper help) {
-		this.background = help.createDrawable(gui_rl,6,15,163,55-18);
+		this.background = help.createDrawable(gui_rl,6,15,163-18,55-18);
 		powerStatic = help.createDrawable(gui_rl, 176, 0, 16, 34);
 		powerAnimated = help.createAnimatedDrawable(powerStatic, 480, StartDirection.TOP, true);
 	}

@@ -25,6 +25,8 @@ public class MixinJEIConfig {
 		addon_categories.add(new JEIRefinery(help));
 		addon_categories.add(new JEIVacuum(help));
 		addon_categories.add(new JEICracking(help));
+		addon_categories.add(new JEIReformer(help));
+		addon_categories.add(new JEIHydrotreater(help));
 
 		for (IRecipeCategory<Recipe> category : addon_categories)
 			instance.addRecipeCategories(category);
@@ -79,5 +81,13 @@ public class MixinJEIConfig {
 	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/CrackingHandler;getRecipes()Ljava/util/List;"))
 	public List cracking(CrackingHandler instance) {
 		return JEICracking.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/ReformingHandler;getRecipes()Ljava/util/List;"))
+	public List reformer(ReformingHandler instance) {
+		return JEIReformer.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/HydrotreatingHandler;getRecipes()Ljava/util/List;"))
+	public List hydro(HydrotreatingHandler instance) {
+		return JEIHydrotreater.Recipe.buildRecipes();
 	}
 }
