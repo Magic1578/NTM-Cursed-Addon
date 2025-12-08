@@ -100,8 +100,6 @@ public class AddonBase {
         LCEItemCatalyst.registerMeltingPoints();
 
         AddonFluidTraits.preInit();
-
-        LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }
 
     @SubscribeEvent

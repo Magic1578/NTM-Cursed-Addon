@@ -87,7 +87,7 @@ public class ItemFuzzyIdentifier extends AddonItemBase implements IItemFluidIden
 						spreadType(worldIn,pos,handType,duct.getType(),256);
 				}
 				return EnumActionResult.SUCCESS;
-			} else {
+			} else if (player.isSneaking()) {
 				Block block = worldIn.getBlockState(pos).getBlock();
 				if (block instanceof BlockDummyable dummyable) {
 					BlockPos core = dummyable.findCore(worldIn,pos);

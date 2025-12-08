@@ -228,7 +228,8 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			syncJoules = joules;
 
 			joules = 0;
-			LeafiaPacket._start(this).__write(2,level)/*.__write(3,power)*/.__write(4,totalTransfer).__sendToAffectedClients(); // fuick fuck fuck fuck fuck
+			LeafiaPacket._start(this).__write(2,level)/*.__write(3,power)*/.__write(4,/*totalTransfer+*/cableTransfer).__sendToAffectedClients(); // fuick fuck fuck fuck fuck
+			cableTransfer = 0;
 		} else {
 			tickJoules[needle] = joules;
 			needle = Math.floorMod(needle+1,20);
@@ -323,15 +324,20 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 
     @Override
     public long getSPK() {
-        return power;
+        return syncJoules;
     }
 
     @Override
     public void setSPK(long power) {
-        this.power = power;
+        this.joules = power;
     }
+	long cableTransfer = 0;
+	@Override
+	public void setTransferredSpk(long power) {
+		cableTransfer += power;
+	}
 
-    @Override
+	@Override
     public long getMaxSPK() {
         return Long.MAX_VALUE;
     }

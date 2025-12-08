@@ -106,7 +106,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
             double weight = (double) canProvide / (double) powerAvailable;
             long toUse = (long) Math.max(energyUsed * weight, 0.0D);
 
-            prov.useSPK(toUse);
+            prov.setTransferredSpk(toUse);
             leftover -= toUse;
         }
 
@@ -118,7 +118,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
             ISPKProvider scapegoat = selected.getKey();
 
             long toUse = Math.min(leftover, scapegoat.getSPK());
-            scapegoat.useSPK(toUse);
+            scapegoat.setTransferredSpk(toUse);
             leftover -= toUse;
         }
     }

@@ -55,7 +55,7 @@ public abstract class MixinEntityNukeExplosionMK3 extends Entity implements IChu
 		}
 	}
 
-	@Inject(method = "isJammed",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setDead()V"),remap = false,require = 1)
+	@Inject(method = "isJammed",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setDead()V"),require = 1)
 	private static void onIsJammed(World world,Entity entity,CallbackInfoReturnable<Boolean> cir,@Local(type = ATEntry.class) ATEntry jammer) {
 		FolkvangrJammers.lastDetectedJammer = new BlockPos(jammer.x, jammer.y, jammer.z);
 	}

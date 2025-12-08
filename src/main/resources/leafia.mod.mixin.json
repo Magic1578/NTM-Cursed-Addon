@@ -13,6 +13,7 @@
     "hbm.MixinRenderTorex"
   ],
   "mixins": [
+    "hbm.MixinBlockStorageCrate",
     "hbm.MixinControlEvent",
     "hbm.MixinCoreComponent",
     "hbm.MixinCoreCore",
@@ -30,16 +31,21 @@
     "hbm.MixinItemDesignatorRange",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinJEIConfig",
+    "hbm.MixinLandmine",
+    "hbm.MixinModBlocks",
     "hbm.MixinModEventHandler",
     "hbm.MixinModItems",
     "hbm.MixinPacketDispatcher",
     "hbm.MixinTileEntityChungus",
+    "hbm.MixinTileEntityCondenser",
     "hbm.MixinTileEntityCore",
     "hbm.MixinTileEntityCoreEmitter",
     "hbm.MixinTileEntityCoreInjector",
     "hbm.MixinTileEntityCoreReceiver",
     "hbm.MixinTileEntityCoreStabilizer",
     "hbm.MixinTileEntityCrateTungsten",
+    "hbm.MixinTileEntityHeatBoiler",
+    "hbm.MixinTileEntityHeatBoilerIndustrial",
     "hbm.MixinTileEntityMachineBase"
   ],
   "server": [

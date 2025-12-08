@@ -13,10 +13,11 @@ public interface ISPKProvider extends ISPKHandler {
      *
      * @param power The amount of power to use. Ensure this value is less than or equal to the current power.
      */
-    default void useSPK(long power) {
+    @Deprecated
+    default void setTransferredSpk(long power) {
         // Subtract the specified power from the current power and update the power level
-        this.setSPK(this.getSPK() - power);
-    }
+        //this.setSPK(this.getSPK() - power);
+    } // mov, joules are supposed to be reset every tick, we do not need a buffer of them.
 
     /**
      * Retrieves the maximum speed at which the energy provider can send energy.
@@ -65,7 +66,7 @@ public interface ISPKProvider extends ISPKHandler {
                     long rejected = rec.transferSPK(toTransfer, false);
                     long accepted = toTransfer - rejected;
                     if (accepted > 0L) {
-                        this.useSPK(accepted);
+                        this.setTransferredSpk(accepted);
                     }
                 }
             }
@@ -84,7 +85,7 @@ public interface ISPKProvider extends ISPKHandler {
                     long rejected = rec.transferSPK(toTransfer, simulate);
                     long accepted = toTransfer - rejected;
                     if (accepted > 0L) {
-                        if (!simulate) this.useSPK(accepted);
+                        if (!simulate) this.setTransferredSpk(accepted);
                         return accepted;
                     }
                 }

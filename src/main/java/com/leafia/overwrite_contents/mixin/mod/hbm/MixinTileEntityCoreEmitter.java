@@ -167,7 +167,8 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
                                               .__write(1, watts)
                                               .__write(2, prev)
                                               .__write(3, isActive)
-                                              .__write(4, tank.getFill());
+                                              .__write(4, tank.getFill())
+                                              .__write(5,power);
             //if (watts != prevWatts)
             //	packet.__write(1,watts);
             packet.__sendToAffectedClients();
@@ -296,6 +297,9 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
             case 4:
                 tank.setFill((int)value);
                 tank.setTankType(Fluids.CRYOGEL);
+                break;
+            case 5:
+                power = (long)value;
                 break;
         }
     }

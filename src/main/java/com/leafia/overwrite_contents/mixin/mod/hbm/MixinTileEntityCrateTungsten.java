@@ -7,6 +7,8 @@ import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.machine.TileEntityCrate;
 import com.hbm.tileentity.machine.TileEntityCrateTungsten;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TileEntityCrateTungsten.class)
@@ -35,6 +38,14 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
         for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
             trySubscribeSPK(world, pos.getX() + dir.offsetX, pos.getY() + dir.offsetY, pos.getZ() + dir.offsetZ, dir);
         }
+    }
+
+    // Smelting fix..?
+    @Redirect(method = "addEnergy",at = @At(value = "INVOKE", target = "Lcom/hbm/inventory/recipes/DFCRecipes;getOutput(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"),require = 1,remap = false)
+    public ItemStack onGetOutput(ItemStack key,@Local(name = "result") ItemStack result) {
+        if (key == null)
+            return result;
+        return key;
     }
 
     @Override
