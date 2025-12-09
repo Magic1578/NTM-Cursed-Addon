@@ -8,7 +8,6 @@ import com.custom_hbm.sound.LCEAudioWrapperClient;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
-import com.hbm.interfaces.IHasCustomModel;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
@@ -41,6 +40,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
@@ -55,32 +55,38 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		for (Class<?> cl : LeafiaClientListener.class.getClasses()) {
 			try {
 				MinecraftForge.EVENT_BUS.register(cl.newInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException|IllegalAccessException e) {
 				LeafiaDevFlaw flaw = new LeafiaDevFlaw(e.getMessage());
 				flaw.setStackTrace(e.getStackTrace());
 				throw flaw;
 			}
 		}
-        ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
+		{
+			ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff,new StateMap.Builder().ignore(BlockDoor.POWERED).build());
+			ModelLoader.setCustomStateMapper(AddonBlocks.fluid_fluoride,new StateMap.Builder().ignore(BlockFluidClassic.LEVEL).build());
+		}
+		{
+			RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class,LCERenderCloudFleija.FACTORY);
+			RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleijaRainbow.class,LCERenderCloudRainbow.FACTORY);
+			RenderingRegistry.registerEntityRenderingHandler(LCETorex.class,LCETorexRender.FACTORY);
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, LCERenderCloudFleija.FACTORY);
-		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleijaRainbow.class, LCERenderCloudRainbow.FACTORY);
-		RenderingRegistry.registerEntityRenderingHandler(LCETorex.class, LCETorexRender.FACTORY);
+			RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class,AbsorberShrapnelRender.FACTORY);
+		}
+		{
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpinnyLight.class,new LCERenderSpinnyLight());
 
-		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpinnyLight.class,new LCERenderSpinnyLight());
+			ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,new DFCComponentRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,new DFCComponentRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,new DFCComponentRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,new DFCComponentRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,new DFCComponentRender());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,new DFCComponentRender());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,new DFCComponentRender());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,new DFCComponentRender());
-        ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class, new DFCComponentRender());
-		ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class, new DFCComponentRender());
-
-		ClientRegistry.bindTileEntitySpecialRenderer(SignTE.class, new SignRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(SignTE.class,new SignRender());
+		}
 	}
 	@Override
 	public File getDataDir() {

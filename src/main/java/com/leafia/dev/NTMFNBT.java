@@ -1,7 +1,6 @@
 package com.leafia.dev;
 
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
-import com.leafia.contents.fluids.AddonFluids;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.nbt.NBTTagCompound;
 

@@ -9,6 +9,7 @@ import com.hbm.lib.HBMSoundHandler;
 import com.hbm.tileentity.network.TileEntityPipeBaseNT;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.items.itembase.AddonItemBase;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
@@ -87,6 +88,22 @@ public class ItemFuzzyIdentifier extends AddonItemBase implements IItemFluidIden
 						spreadType(worldIn,pos,handType,duct.getType(),256);
 				}
 				return EnumActionResult.SUCCESS;
+			} else if (te instanceof FFDuctTE duct) {
+				FluidType handType = getType(worldIn,pos.getX(),pos.getY(),pos.getZ(),player.getHeldItem(hand));
+				if (handType != duct.getType()) {
+					if (player.isSneaking()) {
+						NBTTagCompound nbt = stack.getTagCompound();
+						if (nbt == null) nbt = new NBTTagCompound();
+						nbt.setString("fluidtype",duct.getType().getName());
+						stack.setTagCompound(nbt);
+						if (!worldIn.isRemote)
+							worldIn.playSound(null,player.getPosition(),HBMSoundHandler.techBleep,SoundCategory.PLAYERS,1,1);
+						else
+							Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("item.fuzzy_identifier.message",duct.getType().getLocalizedName()).setStyle(new Style().setColor(TextFormatting.YELLOW)));
+					} else
+						spreadTypeFF(worldIn,pos,handType,duct.getType(),256);
+				}
+				return EnumActionResult.SUCCESS;
 			} else if (player.isSneaking()) {
 				Block block = worldIn.getBlockState(pos).getBlock();
 				if (block instanceof BlockDummyable dummyable) {
@@ -124,6 +141,23 @@ public class ItemFuzzyIdentifier extends AddonItemBase implements IItemFluidIden
 					spreadType(worldIn, pos.add(-1, 0, 0), hand, pipe, x-1);
 					spreadType(worldIn, pos.add(0, -1, 0), hand, pipe, x-1);
 					spreadType(worldIn, pos.add(0, 0, -1), hand, pipe, x-1);
+				}
+			}
+		}
+	}
+	public static void spreadTypeFF(World worldIn, BlockPos pos, FluidType hand, FluidType pipe, int x){
+		if(x > 0){
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof FFDuctTE duct){
+				if(duct.getType() == pipe){
+					duct.setType(hand);
+					duct.markDirty();
+					spreadTypeFF(worldIn, pos.add(1, 0, 0), hand, pipe, x-1);
+					spreadTypeFF(worldIn, pos.add(0, 1, 0), hand, pipe, x-1);
+					spreadTypeFF(worldIn, pos.add(0, 0, 1), hand, pipe, x-1);
+					spreadTypeFF(worldIn, pos.add(-1, 0, 0), hand, pipe, x-1);
+					spreadTypeFF(worldIn, pos.add(0, -1, 0), hand, pipe, x-1);
+					spreadTypeFF(worldIn, pos.add(0, 0, -1), hand, pipe, x-1);
 				}
 			}
 		}

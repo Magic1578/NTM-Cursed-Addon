@@ -20,6 +20,7 @@ import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.contents.gear.utility.FuzzyIdentifierBakedModel;
 import com.leafia.contents.gear.utility.FuzzyIdentifierRender;
 import com.leafia.contents.gear.utility.ItemFuzzyIdentifier;
+import com.leafia.contents.network.ff_duct.FFDuctStandard;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
@@ -96,6 +97,11 @@ public class LeafiaClientListener {
 					evt.getModelRegistry().putObject(LeafiaRodItem.rodModel, new LeafiaRodBakedModel());
 				}
 			}
+		}
+
+		@SubscribeEvent
+		public void blockColorsEvent(ColorHandlerEvent.Block evt) {
+			FFDuctStandard.registerColorHandler(evt);
 		}
 
 		private void registerModel(Item item,int meta) {

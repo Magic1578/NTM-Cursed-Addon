@@ -1,8 +1,14 @@
 package com.leafia.dev;
 
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.lib.ForgeDirection;
+import com.leafia.contents.network.FFNBT;
+import com.leafia.contents.network.ff_duct.FFDuctTE;
+import com.leafia.contents.network.ff_duct.uninos.IFFConnector;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -10,7 +16,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
 
@@ -201,5 +212,39 @@ public class LeafiaUtil {
 
 	public static Vec3d getBlockPosCenter(BlockPos pos) {
 		return new Vec3d(pos).add(0.5,0.5,0.5);
+	}
+
+	public static boolean canConnectFF(IBlockAccess world,int x,int y,int z,ForgeDirection dir /* duct's connecting side */,FluidType type) {
+		return canConnectFF(world,new BlockPos(x,y,z),type,dir.toEnumFacing().getOpposite());
+	}
+
+	public static boolean canConnectFF(IBlockAccess world,BlockPos pos,FluidType type,@Nullable EnumFacing facing){
+		TileEntity tileentity = world.getTileEntity(pos);
+		if(tileentity instanceof FFDuctTE && ((FFDuctTE)tileentity).getType() == type)
+			return true;
+		if(tileentity != null && !(tileentity instanceof FFDuctTE) && tileentity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
+			return true;
+		}
+		//Block block = world.getBlockState(pos).getBlock();
+		//if(block instanceof IFluidVisualConnectable)
+		//	return ((IFluidVisualConnectable)block).shouldConnect(type);
+		return false;
+	}
+
+	public static int fillFF(FluidTank sending,FluidTank receiving,int amount) {
+		if (sending.getFluid() == null) return 0;
+		FFNBT.transferTags(sending,receiving);
+		if (receiving.getFluid() == null) {
+			FluidStack stack = sending.getFluid().copy();
+			stack.amount = amount;
+			receiving.setFluid(stack);
+			sending.drain(amount,true);
+			return amount;
+		} else {
+			int toFill = Math.min(receiving.getCapacity()-receiving.getFluidAmount(),amount);
+			receiving.getFluid().amount += toFill;
+			sending.drain(amount,true);
+			return toFill;
+		}
 	}
 }

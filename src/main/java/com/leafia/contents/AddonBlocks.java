@@ -1,13 +1,18 @@
 package com.leafia.contents;
 
 import com.hbm.blocks.ModBlocks;
-import com.hbm.blocks.machine.CoreComponent;
 import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
+import com.leafia.contents.AddonFluids.AddonFF;
 import com.leafia.contents.building.mixed.BlockMixedConcrete;
 import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
+import com.leafia.contents.debug.ff_test.source.FFSourceBlock;
+import com.leafia.contents.debug.ff_test.tank.FFTankBlock;
+import com.leafia.contents.fluids.FluorideFluid;
+import com.leafia.contents.fluids.FluorideFluid.FluorideFluidBlock;
 import com.leafia.contents.machines.powercores.dfc.AddonCoreComponent;
+import com.leafia.contents.network.ff_duct.FFDuctStandard;
 import com.leafia.contents.network.spk_cable.SPKCableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -139,6 +144,15 @@ public class AddonBlocks {
 		}
 	}
 
+	public static final Block ff_duct = new FFDuctStandard(Material.IRON, "ff_duct").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
+
+	static boolean test_dummy = TestBlocks.dummy;
+	public static class TestBlocks {
+		static boolean dummy = false;
+		public static final Block ffsource = new FFSourceBlock(Material.ANVIL,"test_ff_source");
+		public static final Block fftank = new FFTankBlock(Material.ANVIL,"test_ff_tank");
+	}
+
 	private static void modifyBlockParams() {
 		ModBlocks.dfc_core.setResistance(65000000);
 		ModBlocks.dfc_emitter.setResistance(50);
@@ -169,5 +183,10 @@ public class AddonBlocks {
 		for(Block block : ALL_BLOCKS){
 			ForgeRegistries.BLOCKS.register(block);
 		}
+		registerFluidBlocks();
+	}
+	public static Block fluid_fluoride = new FluorideFluidBlock(AddonFF.fluoride, Material.LAVA, "fluoride_fluid");
+	private static void registerFluidBlocks() {
+		AddonFF.fluoride.setBlock(fluid_fluoride);
 	}
 }
