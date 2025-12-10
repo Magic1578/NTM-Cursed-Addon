@@ -1,4 +1,6 @@
 package com.leafia.contents.network.ff_duct.uninos;
 
-public interface IFFHandler extends IFFConnector {
+import net.minecraftforge.fluids.capability.IFluidHandler;
+
+public interface IFFHandler extends IFFConnector,IFluidHandler {
 }

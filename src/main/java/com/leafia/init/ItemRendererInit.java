@@ -10,6 +10,9 @@ import com.leafia.contents.AddonItems.LeafiaRods;
 import com.leafia.contents.building.sign.SignRender;
 import com.leafia.contents.building.sign.SignRender.SignItemRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender.SaltSeparatorItemRender;
+import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender.FFDuctUtilityItemRender;
 import com.leafia.contents.network.spk_cable.SPKCableRender.SPKCableItemRender;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -34,6 +37,10 @@ public class ItemRendererInit {
 		SignItemRender signRenderer = new SignItemRender();
 		for (Block sign : LetterSigns.signs.values())
 			register(sign,signRenderer);
+		FFDuctUtilityItemRender ductUtilRenderer = new FFDuctUtilityItemRender();
+		register(AddonBlocks.ff_pump,ductUtilRenderer);
+
+		register(AddonBlocks.salt_separator,new SaltSeparatorItemRender());
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

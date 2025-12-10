@@ -12,7 +12,9 @@ import com.leafia.contents.debug.ff_test.tank.FFTankBlock;
 import com.leafia.contents.fluids.FluorideFluid;
 import com.leafia.contents.fluids.FluorideFluid.FluorideFluidBlock;
 import com.leafia.contents.machines.powercores.dfc.AddonCoreComponent;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorBlock;
 import com.leafia.contents.network.ff_duct.FFDuctStandard;
+import com.leafia.contents.network.ff_duct.utility.pump.FFPumpBlock;
 import com.leafia.contents.network.spk_cable.SPKCableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -145,6 +147,7 @@ public class AddonBlocks {
 	}
 
 	public static final Block ff_duct = new FFDuctStandard(Material.IRON, "ff_duct").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
+	public static final Block ff_pump = new FFPumpBlock(Material.IRON,"ff_pump").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
 
 	static boolean test_dummy = TestBlocks.dummy;
 	public static class TestBlocks {
@@ -152,6 +155,8 @@ public class AddonBlocks {
 		public static final Block ffsource = new FFSourceBlock(Material.ANVIL,"test_ff_source");
 		public static final Block fftank = new FFTankBlock(Material.ANVIL,"test_ff_tank");
 	}
+
+	public static final Block salt_separator = new SaltSeparatorBlock(Material.IRON,"salt_separator").setHardness(5.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
 
 	private static void modifyBlockParams() {
 		ModBlocks.dfc_core.setResistance(65000000);

@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidTank;
 public interface IFFProvider extends IFFHandler {
 	default void tryProvide(FluidTank sending,World world,BlockPos pos,ForgeDirection dir) {
 		if (sending.getFluid() == null) return;
+		if (!this.canConnect(sending.getFluid(),dir)) return;
 		TileEntity targetTE = world.getTileEntity(pos);
 		if (targetTE == null) return;
 		ForgeDirection dirOpposite = dir.getOpposite();

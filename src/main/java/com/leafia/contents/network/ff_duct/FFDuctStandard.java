@@ -15,7 +15,6 @@ import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.Library;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.loader.HFRWavefrontObject;
-import com.hbm.render.model.DuctNeoBakedModel;
 import com.hbm.util.I18nUtil;
 import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
@@ -73,6 +72,12 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 	public static final PropertyBool NEG_Y = FluidDuctStandard.NEG_Y;
 	public static final PropertyBool POS_Z = FluidDuctStandard.POS_Z;
 	public static final PropertyBool NEG_Z = FluidDuctStandard.NEG_Z;
+	public static final PropertyBool POS_X_E = PropertyBool.create("posxe");
+	public static final PropertyBool NEG_X_E = PropertyBool.create("negxe");
+	public static final PropertyBool POS_Y_E = PropertyBool.create("posye");
+	public static final PropertyBool NEG_Y_E = PropertyBool.create("negye");
+	public static final PropertyBool POS_Z_E = PropertyBool.create("posze");
+	public static final PropertyBool NEG_Z_E = PropertyBool.create("negze");
 
 	private static final AxisAlignedBB DUCT_BB = new AxisAlignedBB(1, 1, 1, -1, -1, -1);
 
@@ -81,7 +86,7 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 	@SideOnly(Side.CLIENT)
 	public static TextureAtlasSprite[] overlaySprites; // overlay[]
 
-	private final ResourceLocation objModelLocation = new ResourceLocation(AddonBase.MODID, "models/leafia/lftr/pipe_ff_bright.obj");
+	private final ResourceLocation objModelLocation = new ResourceLocation(AddonBase.MODID, "models/leafia/lftr/pipe_ff_bright_flat.obj");
 
 	public FFDuctStandard(Material materialIn,String reg) {
 		super(materialIn);
@@ -98,7 +103,13 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 				.withProperty(POS_Y, Boolean.FALSE)
 				.withProperty(NEG_Y, Boolean.FALSE)
 				.withProperty(POS_Z, Boolean.FALSE)
-				.withProperty(NEG_Z, Boolean.FALSE);
+				.withProperty(NEG_Z, Boolean.FALSE)
+				.withProperty(POS_X_E, Boolean.FALSE)
+				.withProperty(NEG_X_E, Boolean.FALSE)
+				.withProperty(POS_Y_E, Boolean.FALSE)
+				.withProperty(NEG_Y_E, Boolean.FALSE)
+				.withProperty(POS_Z_E, Boolean.FALSE)
+				.withProperty(NEG_Z_E, Boolean.FALSE);
 		this.setDefaultState(base);
 
 		AddonBlocks.ALL_BLOCKS.add(this);
@@ -107,7 +118,7 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, META, POS_X, NEG_X, POS_Y, NEG_Y, POS_Z, NEG_Z);
+		return new BlockStateContainer(this, META, POS_X, NEG_X, POS_Y, NEG_Y, POS_Z, NEG_Z, POS_X_E, NEG_X_E, POS_Y_E, NEG_Y_E, POS_Z_E, NEG_Z_E);
 	}
 
 	@Override
@@ -118,6 +129,13 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		return state.getValue(META);
+	}
+
+	private boolean isEnd(IBlockAccess world,int x,int y,int z,ForgeDirection dir,FluidType type) {
+		TileEntity tileentity = world.getTileEntity(new BlockPos(x+dir.offsetX,y+dir.offsetY,z+dir.offsetZ));
+		if(tileentity instanceof FFDuctTE && ((FFDuctTE)tileentity).getType() == type)
+			return false;
+		return true;
 	}
 
 	/**
@@ -164,6 +182,17 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 		};
 	}
 
+	private boolean isEnd(IBlockAccess world, BlockPos pos, EnumFacing dir, FluidType type) {
+		return switch (dir) {
+			case EAST -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.POS_X, type);
+			case WEST -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.NEG_X, type);
+			case UP -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.POS_Y, type);
+			case DOWN -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.NEG_Y, type);
+			case SOUTH -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.POS_Z, type);
+			case NORTH -> isEnd(world, pos.getX(), pos.getY(), pos.getZ(), Library.NEG_Z, type);
+		};
+	}
+
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
@@ -180,7 +209,13 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 					.withProperty(POS_Y, pY)
 					.withProperty(NEG_Y, nY)
 					.withProperty(POS_Z, pZ)
-					.withProperty(NEG_Z, nZ);
+					.withProperty(NEG_Z, nZ)
+					.withProperty(POS_X_E,isEnd(world,pos,EnumFacing.EAST,type))
+					.withProperty(NEG_X_E,isEnd(world,pos,EnumFacing.WEST,type))
+					.withProperty(POS_Y_E,isEnd(world,pos,EnumFacing.UP,type))
+					.withProperty(NEG_Y_E,isEnd(world,pos,EnumFacing.DOWN,type))
+					.withProperty(POS_Z_E,isEnd(world,pos,EnumFacing.SOUTH,type))
+					.withProperty(NEG_Z_E,isEnd(world,pos,EnumFacing.NORTH,type));
 		}
 		return state;
 	}
@@ -424,11 +459,11 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 			IBakedModel itemModel;
 
 			if (wavefront == null) {
-				blockModel = DuctNeoBakedModel.empty(missing);
-				itemModel = DuctNeoBakedModel.empty(missing);
+				blockModel = FFDuctBakedModel.empty(missing);
+				itemModel = FFDuctBakedModel.empty(missing);
 			} else {
-				blockModel = DuctNeoBakedModel.forBlock(wavefront, base, overlay);
-				itemModel = DuctNeoBakedModel.forItem(wavefront, base, overlay, 1.0F, 0.0F, 0.0F, 0.0F, (float)Math.PI);
+				blockModel = FFDuctBakedModel.forBlock(wavefront, base, overlay);
+				itemModel = FFDuctBakedModel.forItem(wavefront, base, overlay, 1.0F, 0.0F, 0.0F, 0.0F, (float)Math.PI);
 			}
 
 			ModelResourceLocation mrlBlock = new ModelResourceLocation(getRegistryName(), "meta=" + meta);

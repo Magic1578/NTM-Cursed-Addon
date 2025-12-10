@@ -80,6 +80,7 @@ public class SignRender extends TileEntitySpecialRenderer<SignTE>  {
 	@Override
 	public void render(SignTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
 		LeafiaGls.pushMatrix();
+		LeafiaGls.enableLighting();
 		FontRenderer font = Minecraft.getMinecraft().fontRenderer;
 		LeafiaGls.translate(x+0.5,y+0.5,z+0.5);
 		IBlockState state = getWorld().getBlockState(te.getPos());

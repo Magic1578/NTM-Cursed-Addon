@@ -6,7 +6,9 @@ import com.leafia.contents.debug.ff_test.source.FFSourceTE;
 import com.leafia.contents.debug.ff_test.tank.FFTankTE;
 import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorTE;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
+import com.leafia.contents.network.ff_duct.utility.pump.FFPumpTE;
 import com.leafia.contents.network.spk_cable.SPKCableTE;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -24,6 +26,8 @@ public class TEInit {
 		register(CoreExchangerTE.class,"core_exchanger_te");
 		register(SignTE.class,"letter_sign_te");
 		register(FFDuctTE.class,"ff_duct_te");
+		register(FFPumpTE.class,"ff_pump_te");
+		register(SaltSeparatorTE.class,"salt_separator_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

@@ -12,9 +12,11 @@ import net.minecraftforge.fluids.FluidTank;
 
 public interface IFFReceiver extends IFFHandler {
 	default void trySubscribe(FluidTank tank,FluidStack defaultStack,World world,BlockPos pos,ForgeDirection dir) {
+		FluidStack stack = tank.getFluid() == null ? defaultStack : tank.getFluid();
+		if (!this.canConnect(stack,dir)) return;
 		TileEntity te = Compat.getTileStandard(world,pos.getX(),pos.getY(),pos.getZ());
 		if (te instanceof IFFConductor conductor) {
-			if (!conductor.canConnect(tank.getFluid() == null ? defaultStack : tank.getFluid(),dir.getOpposite())) return;
+			if (!conductor.canConnect(stack,dir.getOpposite())) return;
 			FFNode node = UniNodespace.getNode(world,pos,FFNet.PROVIDER);
 			if (node != null && node.net != null)
 				node.net.addReceiver(this);

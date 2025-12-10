@@ -15,13 +15,13 @@ import java.util.List;
 import static com.hbm.inventory.fluid.Fluids.*;
 
 public class AddonFluids {
-	protected static final List<FluidType> metaOrder;
+	public static final List<FluidType> metaOrderPointer;
 	static {
 		Field metaField = null;
 		try {
 			metaField = Fluids.class.getDeclaredField("metaOrder");
 			metaField.setAccessible(true);
-			metaOrder = (List<FluidType>)metaField.get(null);
+			metaOrderPointer = (List<FluidType>)metaField.get(null);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new LeafiaDevFlaw(e);
 		}
@@ -41,10 +41,12 @@ public class AddonFluids {
 	}
 	public static FluidType FLUORIDE;
 	//public static FluidType FLUORINE; oh boy fluorine already exists
+	public static FluidType UF6_233;
+	public static FluidType UF6_235;
 	public static void init() {
 		FLUORIDE = new AddonFluidType("FLUORIDE",0xd3d8b9,3,0,0,EnumSymbol.NONE).setTemp(500).addTraits(LIQUID).setFFNameOverride("fluoride");
 		//FLUORINE = new FluidType("FLUORINE",0xc5b055,4,0,4,EnumSymbol.NOWATER).addTraits(GASEOUS);
-		metaOrder.add(FLUORIDE);
-		//metaOrder.add(FLUORINE);
+		UF6_233 = new AddonFluidType("UF6_233",UF6);
+		UF6_235 = new AddonFluidType("UF6_235",UF6);
 	}
 }

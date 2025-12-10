@@ -19,15 +19,21 @@ public class FFNet extends NodeNet<IFFReceiver,IFFProvider,FFNode,FFNet> {
 		tankMap.putIfAbsent(prov,new HashSet<>());
 		tankMap.get(prov).add(tank);
 	}
+	protected static int timeout = 3_000;
 	@Override
 	public void update() {
 		if (providerEntries.isEmpty()) { tankMap.clear(); return; }
 		if (receiverEntries.isEmpty()) { tankMap.clear(); return; }
+		final long timestamp = System.currentTimeMillis();
 		// i got tired and rushed, have this shitty algorithm
 		ObjectIterator<Entry<IFFProvider>> provIt = providerEntries.object2LongEntrySet().fastIterator();
 		while (provIt.hasNext()) {
 			Object2LongMap.Entry<IFFProvider> entry = provIt.next();
 			IFFProvider prov = entry.getKey();
+			if (timestamp - entry.getLongValue() > timeout || isBadLink(prov)) {
+				provIt.remove();
+				continue;
+			}
 			Set<FluidTank> tanks = tankMap.get(prov);
 			if (tanks != null) {
 				for (FluidTank tank : tanks) {
@@ -38,7 +44,13 @@ public class FFNet extends NodeNet<IFFReceiver,IFFProvider,FFNode,FFNet> {
 					while (recIt.hasNext()) {
 						Object2LongMap.Entry<IFFReceiver> entry1 = recIt.next();
 						IFFReceiver rec = entry1.getKey();
+						if (timestamp - entry.getLongValue() > timeout || isBadLink(rec)) {
+							recIt.remove();
+							continue;
+						}
 						FluidTank receiving = rec.getCorrespondingTank(tank.getFluid());
+						if (receiving.equals(tank)) continue;
+						if (receiving.getFluid() != null && !receiving.getFluid().equals(tank.getFluid())) continue;
 						if (FFNBT.areTagsCompatible(tank.getFluid(),receiving)) {
 							int demand = receiving.getCapacity()-receiving.getFluidAmount();
 							totalDemand += demand;

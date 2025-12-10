@@ -25,6 +25,10 @@ import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorTE;
+import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender;
+import com.leafia.contents.network.ff_duct.utility.pump.FFPumpTE;
 import com.leafia.contents.network.spk_cable.SPKCableRender;
 import com.leafia.contents.network.spk_cable.SPKCableTE;
 import com.leafia.eventbuses.LeafiaClientListener;
@@ -78,14 +82,19 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
 
 			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,new DFCComponentRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,new DFCComponentRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,new DFCComponentRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,new DFCComponentRender());
-			ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,new DFCComponentRender());
+			DFCComponentRender dfcComponentRender = new DFCComponentRender();
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,dfcComponentRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,dfcComponentRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,dfcComponentRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,dfcComponentRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,dfcComponentRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,dfcComponentRender);
 
 			ClientRegistry.bindTileEntitySpecialRenderer(SignTE.class,new SignRender());
+			FFDuctUtilityRender ffUtilityRender = new FFDuctUtilityRender();
+			ClientRegistry.bindTileEntitySpecialRenderer(FFPumpTE.class,ffUtilityRender);
+
+			ClientRegistry.bindTileEntitySpecialRenderer(SaltSeparatorTE.class,new SaltSeparatorRender());
 		}
 	}
 	@Override

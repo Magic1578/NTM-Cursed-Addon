@@ -3,7 +3,6 @@ package com.leafia.contents.network.spk_cable;
 import com.custom_hbm.render.misc.LCEBeamPronter;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
-import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.render.misc.BeamPronter;
 import com.leafia.contents.AddonBlocks;
@@ -19,10 +18,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
-import static com.hbm.render.NTMRenderHelper.bindTexture;
+import static com.leafia.init.ResourceInit.getVAO;
 
 public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
-	public static final WaveFrontObjectVAO mdl = new HFRWavefrontObject(new ResourceLocation("leafia", "models/leafia/cable_spk.obj")).asVBO();
+	public static final WaveFrontObjectVAO mdl = getVAO(new ResourceLocation("leafia", "models/leafia/cable_spk.obj"));
 	public static final ResourceLocation tex = new ResourceLocation("leafia", "textures/blocks/leafia/cable_spk.png");
 
 	public static class SPKCableItemRender extends LeafiaItemRenderer {

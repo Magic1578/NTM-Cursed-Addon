@@ -7,6 +7,9 @@ import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
+import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
+import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender;
+import com.leafia.contents.network.spk_cable.SPKCableRender;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,6 +31,9 @@ public class ResourceInit {
 		_initClass(LCERenderCloudFleija.class);
 		_initClass(DFCCoreRender.class);
 		_initClass(DFCComponentRender.class);
+		_initClass(SPKCableRender.class);
+		_initClass(FFDuctUtilityRender.class);
+		_initClass(SaltSeparatorRender.class);
 	}
 
 	public static void init() {
