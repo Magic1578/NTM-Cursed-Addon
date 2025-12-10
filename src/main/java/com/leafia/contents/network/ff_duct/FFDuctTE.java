@@ -26,12 +26,14 @@ public class FFDuctTE extends TileEntity implements ITickable, IFFConductor, Lea
 	@Override
 	public void update() {
 		if (!world.isRemote) {
-			if (this.node == null || this.node.expired) {
-				if (this.shouldCreateNode()) {
-					this.node = UniNodespace.getNode(world,pos,FFNet.PROVIDER);
-					if (this.node == null || this.node.expired) {
-						this.node = this.createNode();
-						UniNodespace.createNode(world, node);
+			if (type.getFF() != null) {
+				if (this.node == null || this.node.expired) {
+					if (this.shouldCreateNode()) {
+						this.node = UniNodespace.getNode(world,pos,FFNet.PROVIDER);
+						if (this.node == null || this.node.expired) {
+							this.node = this.createNode();
+							UniNodespace.createNode(world,node);
+						}
 					}
 				}
 			}
