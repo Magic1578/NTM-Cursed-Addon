@@ -4,6 +4,7 @@ import com.hbm.handler.pollution.PollutionHandler;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.trait.FT_Polluting;
+import com.hbm.inventory.fluid.trait.FT_VentRadiation;
 import com.hbm.render.misc.EnumSymbol;
 import com.leafia.contents.fluids.AddonFluidType;
 import com.leafia.contents.fluids.FluorideFluid;
@@ -47,6 +48,7 @@ public class AddonFluids {
 	public static FluidType UF6_235;
 	public static FluidType HOT_WATER;
 	public static FluidType HOT_AIR;
+	public static FluidType RADSPICE_SLOP;
 	public static void init() {
 		FLUORIDE = new AddonFluidType("FLUORIDE",0xd3d8b9,5,0,0,EnumSymbol.NONE).setTemp(500).addTraits(LIQUID,new FT_Polluting().release(PollutionHandler.PollutionType.POISON, POISON_EXTREME)).setFFNameOverride("fluoride");
 		//FLUORINE = new FluidType("FLUORINE",0xc5b055,4,0,4,EnumSymbol.NOWATER).addTraits(GASEOUS);
@@ -54,5 +56,6 @@ public class AddonFluids {
 		UF6_235 = new AddonFluidType("UF6_235",UF6);
 		HOT_WATER = new AddonFluidType("HOT_WATER",WATER).setTemp(70);
 		HOT_AIR = new AddonFluidType("HOT_AIR",AIR).setTemp(50);
+		RADSPICE_SLOP = new AddonFluidType("RADSPICE_SLOP",0x8baf2d,9999999,99999999,9999999,EnumSymbol.RADIATION).addTraits(LIQUID,new FT_VentRadiation(20_000/1000f),VISCOUS);
 	}
 }

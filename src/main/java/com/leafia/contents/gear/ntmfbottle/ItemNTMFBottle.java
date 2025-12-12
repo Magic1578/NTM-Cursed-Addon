@@ -6,12 +6,18 @@ import com.hbm.handler.pollution.PollutionHandler.PollutionType;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.fluid.trait.FT_Corrosive;
 import com.hbm.inventory.fluid.trait.FT_Polluting;
+import com.hbm.inventory.fluid.trait.FT_VentRadiation;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Amat;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Delicious;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Gaseous;
+import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Viscous;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
+import com.hbm.util.ContaminationUtil;
+import com.hbm.util.ContaminationUtil.ContaminationType;
+import com.hbm.util.ContaminationUtil.HazardType;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.building.mixed.TextureAtlasSpriteHalf;
 import com.leafia.contents.building.mixed.TextureAtlasSpriteHalf.HalfDirection;
@@ -98,7 +104,7 @@ public class ItemNTMFBottle extends AddonItemBaked {
 		return Fluids.fromID(stack.getItemDamage());
 	}
 
-	public boolean isValidFluid(FluidType fluid) {
+	public static boolean isValidFluid(FluidType fluid) {
 		if (fluid.equals(Fluids.NONE)) return false; // what's the point?
 		if (fluid.equals(Fluids.WATER)) return false; // already exists
 		if (fluid.equals(Fluids.MERCURY)) return false; // already exists
@@ -111,6 +117,8 @@ public class ItemNTMFBottle extends AddonItemBaked {
 		return EnumAction.DRINK;
 	}
 	public int getMaxItemUseDuration(ItemStack stack) {
+		if (getFluidFromStack(stack).hasTrait(FT_Viscous.class))
+			return 96;
 		return 32;
 	}
 	public ActionResult<ItemStack> onItemRightClick(World worldIn,EntityPlayer playerIn,EnumHand handIn) {
@@ -121,6 +129,35 @@ public class ItemNTMFBottle extends AddonItemBaked {
 		EntityPlayer player = entity instanceof EntityPlayer ? (EntityPlayer)entity : null;
 		if (!worldIn.isRemote) {
 			FluidType fluid = getFluidFromStack(stack);
+			if (fluid.temperature > 60) {
+				// BURNING
+				float damage = (fluid.temperature-60)/400f*20;// maybe it was too weak
+				entity.attackEntityFrom(LeafiaDamageSource.drinkhot,damage);
+				if (fluid.temperature > 300) {
+					float duration = (fluid.temperature-300)/50f+3;
+					entity.setFire((int)duration);
+				}
+			}
+			else if (fluid.temperature < -20) {
+				// FREEZING
+				float damage = -(fluid.temperature+20)/200f*20;
+				entity.attackEntityFrom(LeafiaDamageSource.drinkcryo,damage);
+			}
+			if (fluid.hasTrait(FT_Corrosive.class)) {
+				// ACID
+				entity.attackEntityFrom(LeafiaDamageSource.drinkacid,fluid.getTrait(FT_Corrosive.class).getRating()/3f);
+			}
+			if (fluid.hasTrait(FT_VentRadiation.class)) {
+				// RADIATION
+				ContaminationUtil.contaminate(entity,HazardType.RADIATION,ContaminationType.CREATIVE,fluid.getTrait(FT_VentRadiation.class).getRadPerMB()*333);
+			}
+			if (player != null) {
+				// HUNGER
+				int fill = 2;
+				if (fluid.hasTrait(FT_Delicious.class))
+					fill = 5;
+				player.getFoodStats().addStats(fill,fill);
+			}
 			{
 				// POISONING
 				float damage = fluid.poison*5;
@@ -155,8 +192,10 @@ public class ItemNTMFBottle extends AddonItemBaked {
 						HbmLivingProps.incrementBlackLung(entity,(int)coal);
 					damage = Math.max(damage,poisoning);
 				}
-				if (damage >= 7.5) {
-					damage /= 2;
+				damage *= 1.5f; // i felt like it was too weak
+				boolean isFatal = entity.getHealth() <= damage/1.5;
+				if (damage >= 12.5 && !isFatal) {
+					damage /= 1.5f;
 					int ix = MathHelper.floor(entity.posX);
 					int iy = MathHelper.floor(entity.posY);
 					int iz = MathHelper.floor(entity.posZ);
@@ -185,23 +224,6 @@ public class ItemNTMFBottle extends AddonItemBaked {
 					entity.attackEntityFrom(LeafiaDamageSource.poison,damage);
 					entity.addPotionEffect(new PotionEffect(MobEffects.POISON,(int)(damage*20),(int)Math.max(0,damage/5-1)));
 				}
-			}
-			if (fluid.temperature > 60) {
-				// BURNING
-				float damage = (fluid.temperature-60)/100f*20;// maybe it was too weak
-				entity.attackEntityFrom(LeafiaDamageSource.drinkhot,damage);
-			}
-			else if (fluid.temperature < -20) {
-				// FREEZING
-				float damage = -(fluid.temperature+20)/100f;
-				entity.attackEntityFrom(LeafiaDamageSource.drinkcryo,damage);
-			}
-			if (player != null) {
-				// HUNGER
-				int fill = 2;
-				if (fluid.hasTrait(FT_Delicious.class))
-					fill = 5;
-				player.getFoodStats().addStats(fill,fill);
 			}
 		}
 		if (player != null) {

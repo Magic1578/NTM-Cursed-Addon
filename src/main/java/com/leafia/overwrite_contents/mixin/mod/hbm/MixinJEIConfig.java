@@ -1,15 +1,25 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.handler.jei.*;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.Fluids;
+import com.leafia.contents.AddonItems;
+import com.leafia.contents.gear.ntmfbottle.ItemNTMFBottle;
 import com.leafia.jei.*;
 import com.leafia.jei.JEICentrifuge.Recipe;
 import com.llamalad7.mixinextras.sugar.Local;
 import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.ISubtypeRegistry;
+import mezz.jei.api.ISubtypeRegistry.ISubtypeInterpreter;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +66,18 @@ public class MixinJEIConfig {
 					throw iarg;
 			}*/ // this is retarded
 		}
+	}
+
+	private static final ISubtypeRegistry.ISubtypeInterpreter metadataBottleInterpreter = stack -> {
+		FluidType type = Fluids.fromID(stack.getMetadata());
+		if (type != null && type != Fluids.NONE && ItemNTMFBottle.getFluidFromStack(stack) != Fluids.NONE) {
+			return type.getTranslationKey();
+		}
+		return "";
+	};
+	@Inject(method = "registerSubtypes",at = @At(value = "TAIL"),require = 1)
+	public void onRegisterSubtypes(ISubtypeRegistry subtypeRegistry,CallbackInfo ci) {
+		subtypeRegistry.registerSubtypeInterpreter(AddonItems.ntmfbottle, metadataBottleInterpreter);
 	}
 
 	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/CentrifugeRecipeHandler;getRecipes()Ljava/util/List;"),require = 1)

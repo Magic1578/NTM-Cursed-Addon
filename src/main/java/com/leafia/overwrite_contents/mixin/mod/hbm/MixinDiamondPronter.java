@@ -34,10 +34,10 @@ public class MixinDiamondPronter {
 			int y = 0;
 			float localOffset = -startOffset+i*width*2;
 			NTMRenderHelper.startDrawingTexturedQuads();
-			NTMRenderHelper.addVertexWithUV(0.01,height+oY,-width+oX+localOffset,(x+4)*p,y*p);
-			NTMRenderHelper.addVertexWithUV(0.01,height+oY,width+oX+localOffset,x*p,y*p);
-			NTMRenderHelper.addVertexWithUV(0.01,-height+oY,width+oX+localOffset,x*p,(y+5)*p);
-			NTMRenderHelper.addVertexWithUV(0.01,-height+oY,-width+oX+localOffset,(x+4)*p,(y+5)*p);
+			NTMRenderHelper.addVertexWithUV(0.002,height+oY,-width+oX+localOffset,(x+4)*p,y*p);
+			NTMRenderHelper.addVertexWithUV(0.002,height+oY,width+oX+localOffset,x*p,y*p);
+			NTMRenderHelper.addVertexWithUV(0.002,-height+oY,width+oX+localOffset,x*p,(y+5)*p);
+			NTMRenderHelper.addVertexWithUV(0.002,-height+oY,-width+oX+localOffset,(x+4)*p,(y+5)*p);
 			NTMRenderHelper.draw();
 		}
 
@@ -143,10 +143,10 @@ public class MixinDiamondPronter {
 			int y = symbol.y;
 
 			NTMRenderHelper.startDrawingTexturedQuads();
-			NTMRenderHelper.addVertexWithUV(0.01, symSize + oY, -symSize + oZ, (x + 59) * p, y * p);
-			NTMRenderHelper.addVertexWithUV(0.01, symSize + oY, symSize + oZ, x * p, y * p);
-			NTMRenderHelper.addVertexWithUV(0.01, -symSize + oY, symSize + oZ, x * p, (y + 59) * p);
-			NTMRenderHelper.addVertexWithUV(0.01, -symSize + oY, -symSize + oZ, (x + 59) * p, (y + 59) * p);
+			NTMRenderHelper.addVertexWithUV(0.002, symSize + oY, -symSize + oZ, (x + 59) * p, y * p);
+			NTMRenderHelper.addVertexWithUV(0.002, symSize + oY, symSize + oZ, x * p, y * p);
+			NTMRenderHelper.addVertexWithUV(0.002, -symSize + oY, symSize + oZ, x * p, (y + 59) * p);
+			NTMRenderHelper.addVertexWithUV(0.002, -symSize + oY, -symSize + oZ, (x + 59) * p, (y + 59) * p);
 			NTMRenderHelper.draw();
 		}
 
