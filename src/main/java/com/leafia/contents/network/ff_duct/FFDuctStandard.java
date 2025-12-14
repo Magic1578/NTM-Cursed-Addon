@@ -15,9 +15,11 @@ import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.Library;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.loader.HFRWavefrontObject;
+import com.hbm.tileentity.TileEntityProxyBase;
 import com.hbm.util.I18nUtil;
 import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.network.ff_duct.uninos.IFFHandler;
 import com.leafia.dev.LeafiaUtil;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -154,16 +156,21 @@ public class FFDuctStandard extends FFDuctBase implements IDynamicModels, ILookO
 			if (neighbor.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
 				IFluidHandler handler = neighbor.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
 				if (handler != null) {
-					IFluidTankProperties[] props = handler.getTankProperties();
-					if (props != null && props.length > 0) {
-						for (IFluidTankProperties p : props) {
-							if (p != null && (p.canFill() || p.canDrain())) {
-								return true;
+					TileEntity mainTE = neighbor;
+					if (neighbor instanceof TileEntityProxyBase proxy)
+						mainTE = proxy.getTE();
+					if (mainTE instanceof IFFHandler) {
+						IFluidTankProperties[] props = handler.getTankProperties();
+						if (props != null && props.length > 0) {
+							for (IFluidTankProperties p : props) {
+								if (p != null && (p.canFill() || p.canDrain())) {
+									return true;
+								}
 							}
+							return false;
 						}
-						return false;
+						return true;
 					}
-					return true;
 				}
 			}
 		}

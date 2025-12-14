@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.reactors.lftr.components.ejector;
 
 import com.leafia.contents.AddonBlocks;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
@@ -8,6 +9,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class MSREjectorBlock extends BlockContainer {
 
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
@@ -29,6 +33,12 @@ public class MSREjectorBlock extends BlockContainer {
 		this.setRegistryName(s);
 
 		AddonBlocks.ALL_BLOCKS.add(this);
+	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addModular(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 
 	@Override

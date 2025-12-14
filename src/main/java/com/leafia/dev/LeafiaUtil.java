@@ -2,9 +2,11 @@ package com.leafia.dev;
 
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.lib.ForgeDirection;
+import com.hbm.tileentity.TileEntityProxyBase;
 import com.leafia.contents.network.FFNBT;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.uninos.IFFConnector;
+import com.leafia.contents.network.ff_duct.uninos.IFFHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -222,7 +224,10 @@ public class LeafiaUtil {
 		TileEntity tileentity = world.getTileEntity(pos);
 		if(tileentity instanceof FFDuctTE && ((FFDuctTE)tileentity).getType() == type)
 			return true;
-		if(tileentity != null && !(tileentity instanceof FFDuctTE) && tileentity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
+		TileEntity mainTE = tileentity;
+		if (tileentity instanceof TileEntityProxyBase proxy)
+			mainTE = proxy.getTE();
+		if(tileentity != null && !(tileentity instanceof FFDuctTE) && tileentity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing) && mainTE instanceof IFFHandler) {
 			return true;
 		}
 		//Block block = world.getBlockState(pos).getBlock();

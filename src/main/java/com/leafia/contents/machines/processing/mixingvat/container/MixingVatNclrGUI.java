@@ -38,8 +38,8 @@ public class MixingVatNclrGUI extends LCEGuiInfoContainer {
 	public void drawScreen(int mouseX, int mouseY, float f) {
 		super.drawScreen(mouseX, mouseY, f);
 
-		LeafiaClientUtil.renderTankInfo(this, mouseX, mouseY, guiLeft + 45 - 18, guiTop + 69 - 52, 16, 52, vat.tankNc1, vat.inputType.getFF());
-		LeafiaClientUtil.renderTankInfo(this, mouseX, mouseY, guiLeft + 45 - 18 + 108, guiTop + 69 - 52, 16, 52, vat.tankNc1, vat.inputType.getFF());
+		LeafiaClientUtil.renderTankInfo(this, mouseX, mouseY, guiLeft + 45 - 18, guiTop + 69 - 52, 16, 52, vat.tankNc1, vat.inputTypeNc.getFF());
+		LeafiaClientUtil.renderTankInfo(this, mouseX, mouseY, guiLeft + 45 - 18 + 108, guiTop + 69 - 52, 16, 52, vat.tankNc1, vat.inputTypeNc.getFF());
 
 		this.drawElectricityInfo(this, mouseX, mouseY, guiLeft + 186, guiTop + 18, 16, 35, vat.power, MixingVatTE.maxPower);
 
@@ -75,6 +75,8 @@ public class MixingVatNclrGUI extends LCEGuiInfoContainer {
 
 		int i = (int) vat.getPowerRemainingScaled(35);
 		drawTexturedModalRect(guiLeft + 186, guiTop + 53 - i, 210, 35 - i, 16, i);
+		if (vat.power >= 1000/20)
+			drawTexturedModalRect(guiLeft+190,guiTop+4,210,35,9,12);
 
 		int j = (int) vat.getProgressScaled(54);
 		drawTexturedModalRect(guiLeft + 70, guiTop + 54, 0, 203, j, 16);

@@ -1,9 +1,12 @@
 package com.leafia.contents.machines.processing.mixingvat;
 
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.dev.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
+import com.llib.math.LeafiaColor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -45,13 +48,38 @@ public class MixingVatRender extends TileEntitySpecialRenderer<MixingVatTE> {
 		LeafiaGls.translate(0.5,0,-1);
 		bindTexture(tex);
 		mdl.renderPart("Base");
+
+		LeafiaGls.pushMatrix();
+		float rot = te.prevRot+(te.mixerRot-te.prevRot)*partialTicks;
+		LeafiaGls.translate(0,0,-0.5);
+		LeafiaGls.rotate(-rot,0,1,0);
+		LeafiaGls.translate(0,0,0.5);
 		mdl.renderPart("MixingBlade");
+		LeafiaGls.popMatrix();
+
 		mdl.renderPart("VatGlass");
 		LeafiaGls.shadeModel(GL11.GL_SMOOTH);
 		mdl.renderPart("Vat");
 		mdl.renderPart("Tanks");
 		bindTexture(rsc);
+
+		LeafiaGls.pushMatrix();
+		float level = 1;
+		FluidType ntmf = Fluids.NONE;
+		LeafiaColor color;
+		if (!te.nuclearMode) {
+			color = new LeafiaColor();
+		} else {
+			level = Math.max(te.tankNc0.getFluidAmount()/(float)te.tankNc0.getCapacity(),te.tankNc1.getFluidAmount()/(float)te.tankNc1.getCapacity());
+			ntmf = te.inputTypeNc;
+			color = new LeafiaColor(ntmf.getColor());
+		}
+		LeafiaGls.color(color.getRed(),color.getGreen(),color.getBlue());
+		LeafiaGls.translate(0,-0.65+0.65*level,0);
 		mdl.renderPart("VatLiquid");
+		LeafiaGls.popMatrix();
+
+		LeafiaGls.color(1,1,1);
 		LeafiaGls.shadeModel(GL11.GL_FLAT);
 		LeafiaGls.popMatrix();
 	}

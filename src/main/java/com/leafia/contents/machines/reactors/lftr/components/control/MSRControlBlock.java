@@ -6,6 +6,7 @@ import com.hbm.items.tool.ItemTooling;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
@@ -13,6 +14,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,6 +23,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,12 @@ public class MSRControlBlock extends BlockContainer implements ILookOverlay {
 		this.setRegistryName(s);
 
 		AddonBlocks.ALL_BLOCKS.add(this);
+	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addModular(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 
 	@Override

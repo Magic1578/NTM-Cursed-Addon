@@ -1,11 +1,31 @@
 package com.leafia.dev.machine;
 
 import com.hbm.util.I18nUtil;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
 public class MachineTooltip {
+    /// Gets called before addInformation().
+    public static void addInfoASM(Item item,List<String> tooltip) {
+        if (item.getRegistryName() != null) {
+            switch(item.getRegistryName().getPath()) {
+                case "machine_condenser":
+                case "machine_condenser_powered":
+                case "machine_tower_small":
+                case "machine_tower_large":
+                    MachineTooltip.addCondenser(tooltip);
+                    break;
+
+                case "machine_turbine":
+                case "machine_large_turbine":
+                case "machine_chungus":
+
+            }
+        }
+    }
     public static void append(List<String> tooltip,String s) {
         tooltip.set(tooltip.size()-1,tooltip.get(tooltip.size()-1)+s);
     }

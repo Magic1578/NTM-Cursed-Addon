@@ -11,6 +11,7 @@ import com.hbm.lib.InventoryHelper;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,13 @@ public class MSRArbitraryBlock extends BlockMachineBase implements ITooltipProvi
 		ModBlocks.ALL_BLOCKS.remove(this);
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addModular(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
+	}
+
 	@Override
 	public TileEntity createNewTileEntity(World worldIn,int meta) {
 		return new MSRArbitraryTE();

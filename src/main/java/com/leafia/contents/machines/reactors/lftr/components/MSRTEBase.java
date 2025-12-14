@@ -1,7 +1,10 @@
 package com.leafia.contents.machines.reactors.lftr.components;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.forgefluid.FFUtils;
+import com.hbm.inventory.fluid.FluidType;
 import com.hbm.util.I18nUtil;
+import com.leafia.contents.AddonFluids;
 import com.leafia.contents.machines.reactors.lftr.components.element.MSRElementTE;
 import com.leafia.contents.machines.reactors.lftr.components.plug.MSRPlugTE;
 import com.leafia.dev.LeafiaClientUtil;
@@ -10,6 +13,7 @@ import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.llib.group.LeafiaMap;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,7 +34,9 @@ import java.util.Map.Entry;
 
 public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaPacketReceiver {
 	public FluidTank tank = new FluidTank(1000);
-	public static double baseTemperature = 500;
+	public static double getBaseTemperature(FluidType fluidType) {
+		return fluidType.temperature;
+	}
 
 	/** The "chunks is modified, pls don't forget to save me" effect of markDirty, minus the block updates */
 	public void markChanged() {
@@ -175,8 +181,21 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 	@Override
 	public void update() {
 		if (!world.isRemote) {
+			if (tank.getFluid() != null) {
+				FluidStack stack = tank.getFluid();
+				NBTTagCompound nbt = nbtProtocol(stack.tag);
+				nbt.setDouble("heat",Math.max(0,nbt.getDouble("heat")-1));
+				stack.tag = nbt;
+				if (nbt.getDouble("heat") >= 6000-getBaseTemperature(AddonFluids.fromFF(stack.getFluid()))) {
+					if (world.rand.nextInt(350) == 0) {
+						world.playEvent(2001,pos,Block.getStateId(world.getBlockState(pos)));
+						world.setBlockState(pos,ModBlocks.block_corium.getDefaultState());
+						return;
+					}
+				}
+			}
 			sendFluids();
-			LeafiaDebug.debugPos(world,pos,0.05f,0xFFFF00,tank.getFluidAmount()+"mB");
+			//LeafiaDebug.debugPos(world,pos,0.05f,0xFFFF00,tank.getFluidAmount()+"mB");
 			generateTankPacket().__sendToAffectedClients();
 		}
 	}

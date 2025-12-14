@@ -5,9 +5,12 @@ import com.hbm.main.MainRegistry;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
@@ -26,6 +29,13 @@ public class MSRElementBlock extends BlockContainer implements ILookOverlay {
 		this.setRegistryName(s);
 		this.setHarvestLevel("pickaxe", 0);
 		AddonBlocks.ALL_BLOCKS.add(this);
+	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addModular(tooltip);
+		MachineTooltip.addNuclear(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {

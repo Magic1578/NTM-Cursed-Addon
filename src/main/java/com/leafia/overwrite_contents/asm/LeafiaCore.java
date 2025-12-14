@@ -12,7 +12,7 @@ public class LeafiaCore implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{KillMethodTransformer.class.getName(),TranformerCoreLeafia.class.getName()};
+        return new String[]{KillMethodTransformer.class.getName(),TransformerCoreLeafia.class.getName()};
     }
 
     @Override

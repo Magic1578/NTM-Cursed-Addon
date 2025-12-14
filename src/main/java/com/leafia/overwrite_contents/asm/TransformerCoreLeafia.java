@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.asm;
 
 import com.leafia.contents.worldgen.biomes.effects.HasAcidicRain;
+import com.leafia.dev.machine.MachineTooltip;
 import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.transformer.LeafiaGeneralLocal;
 import com.leafia.transformer.WorldServerLeafia;
@@ -19,7 +20,8 @@ import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class TranformerCoreLeafia implements IClassTransformer {
+public class TransformerCoreLeafia implements IClassTransformer {
+	public static Runnable loadFailed = null;
 	// fuck you in particular
 	public static final String[] classesBeingTransformed = {
 			"com.hbm.packet.toserver.ItemFolderPacket.Handler",
@@ -28,7 +30,8 @@ public class TranformerCoreLeafia implements IClassTransformer {
 			"net.minecraft.client.renderer.EntityRenderer",
 			"net.minecraftforge.fluids.FluidTank",
 			"net.minecraft.world.ServerWorldEventHandler",
-			"<REMOVED>"//"com.hbm.inventory.fluid.tank.FluidTankNTM"
+			"<REMOVED>",//"com.hbm.inventory.fluid.tank.FluidTankNTM"
+			"net.minecraft.item.ItemStack"
 	};
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBeingTransformed) {
@@ -99,6 +102,9 @@ public class TranformerCoreLeafia implements IClassTransformer {
 						}
 						break;
 					}
+					case 7:
+						doTransform(classNode,isObfuscated,MachineTooltip.class,index);
+						break;
 					default:
 						throw new LeafiaDevErrorGls("#Leaf: Unexpected index "+index);
 				}
@@ -112,7 +118,8 @@ public class TranformerCoreLeafia implements IClassTransformer {
 			System.out.println("#Leaf ERROR: " + name);
 			e.printStackTrace();
 			if (e instanceof LeafiaDevErrorGls || e instanceof LeafiaDevFlaw) {
-				LeafiaPassiveServer.queueFunction(()->{throw e;}); // fuck you
+				loadFailed = ()->{throw e;};
+				LeafiaPassiveServer.queueFunction(loadFailed); // fuck you
 				//throw e;
 			}
 		}
@@ -259,6 +266,11 @@ public class TranformerCoreLeafia implements IClassTransformer {
 			srgNames.put("func_177984_a","up"); // Offset this BlockPos 1 block up
 			srgNames.put("func_177985_f","west"); // Offset this BlockPos n blocks in western direction
 			srgNames.put("func_177986_g","toLong"); // Serialize this BlockPos into a long value
+		}
+		{
+			srgNames.put("func_82840_a","getTooltip");
+			srgNames.put("func_77973_b","getItem");
+			srgNames.put("func_77624_a","addInformation");
 		}
 		{ // thank you for making me go through all this suffering Mojang
 			/*
@@ -793,6 +805,45 @@ public class TranformerCoreLeafia implements IClassTransformer {
 					helper.method.instructions.insert(new MethodInsnNode(INVOKESTATIC,Type.getInternalName(helper.listener),"fluid_onFilling","(Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraftforge/fluids/capability/IFluidHandler;)V",false));
 					helper.method.instructions.insert(new VarInsnNode(ALOAD,0));
 					helper.method.instructions.insert(new VarInsnNode(ALOAD,1));
+				}
+				break;
+			case 7: // itemStack#getTooltip
+				if (name.equals("getTooltip")) {
+					MethodInsnNode lastGetItem = null;
+					int lastALOADTarget = -1;
+					int lastALOADTarget2 = -1;
+					for (AbstractInsnNode node : helper.method.instructions.toArray()) {
+						if (node instanceof VarInsnNode var) {
+							if (var.getOpcode() == ALOAD) {
+								lastALOADTarget2 = lastALOADTarget;
+								lastALOADTarget = var.var;
+							}
+						}
+						if (node instanceof MethodInsnNode method) {
+							String mapped = pain.mapMethodName(method.owner,method.name,method.desc);
+							String s1 = "getItem";
+							if (s1.equals(method.name) || s1.equals(mapped) || s1.equals(srgNames.get(method.name)) || s1.equals(srgNames.get(mapped)))
+								lastGetItem = method;
+							String s = "addInformation";
+							if (s.equals(method.name) || s.equals(mapped) || s.equals(srgNames.get(method.name)) || s.equals(srgNames.get(mapped))) {
+								if (lastGetItem != null && lastALOADTarget2 != -1) {
+									VarInsnNode copycat1 = new VarInsnNode(ALOAD,0);
+									MethodInsnNode copycat2 = new MethodInsnNode(lastGetItem.getOpcode(),lastGetItem.owner,lastGetItem.name,lastGetItem.desc,lastGetItem.itf);
+									helper.method.instructions.insert(lastGetItem,copycat1);
+									helper.method.instructions.insert(copycat1,copycat2);
+
+									// Right after getting getItem() result on stack
+									helper.method.instructions.insertBefore(copycat1,
+											new VarInsnNode(ALOAD,lastALOADTarget2)
+									); // Loads tooltip list
+									helper.method.instructions.insertBefore(copycat1,new MethodInsnNode(INVOKESTATIC,Type.getInternalName(helper.listener),"addInfoASM","(Lnet/minecraft/item/Item;Ljava/util/List;)V",false));
+									printBytecodes(helper.method.instructions);
+									return true;
+								}
+							}
+						}
+					}
+					throw new LeafiaDevFlaw("LeafiaCore mod error: getTooltip patch failed in ItemStack"); // this is better
 				}
 				break;
 		}

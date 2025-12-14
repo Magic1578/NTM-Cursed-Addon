@@ -125,7 +125,7 @@ public class MSRPlugTE extends MSRTEBase implements IFluidHandler, IFFReceiver {
 			sendFluids();
 			trySubscribe(tank,new FluidStack(inputType.getFF(),0),world,pos.offset(getDirection()),ForgeDirection.getOrientation(getDirection()));
 			if (tank.getFluid() != null) {
-				if (nbtProtocol(tank.getFluid().tag).getDouble("heat") > 4000-baseTemperature)
+				if (nbtProtocol(tank.getFluid().tag).getDouble("heat") > 4000-getBaseTemperature(AddonFluids.fromFF(tank.getFluid().getFluid())))
 					molten = true;
 				Material mat = world.getBlockState(pos.down()).getMaterial();
 				if (molten && mat.isReplaceable() && !mat.isLiquid()) {

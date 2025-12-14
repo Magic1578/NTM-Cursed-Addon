@@ -204,7 +204,7 @@ public class LeafiaClientUtil {
 		if (ntmfExists) {
 			if (ntmf.hasTrait(FT_LFTRCoolant.class)) {
 				NBTTagCompound tag = MSRTEBase.nbtProtocol(stack.tag);
-				temp = (int) (MSRTEBase.baseTemperature+tag.getDouble("heat"));
+				temp = (int) (temp+tag.getDouble("heat"));
 			}
 		}
 		if(temp != 27){

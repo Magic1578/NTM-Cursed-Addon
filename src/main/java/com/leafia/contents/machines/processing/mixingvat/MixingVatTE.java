@@ -1,8 +1,6 @@
 package com.leafia.contents.machines.processing.mixingvat;
 
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
-import com.hbm.blocks.BlockDummyable;
-import com.hbm.forgefluid.FFUtils;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.items.machine.IItemFluidIdentifier;
@@ -32,7 +30,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -57,7 +54,10 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 	int progress = 0;
 	public FluidTank tankNc0 = new FluidTank(4000);
 	public FluidTank tankNc1 = new FluidTank(4000);
-	public FluidType inputType = AddonFluids.FLUORIDE;
+	public FluidType inputTypeNc = AddonFluids.FLUORIDE;
+
+	public float mixerRot = -1;
+	public float prevRot = 0;
 
 	public MixingVatTE() {
 		super(3+10+10);
@@ -244,7 +244,7 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 					if (type.hasTrait(FT_LFTRCoolant.class) && inventory.getStackInSlot(22).isEmpty() && type.getFF() != null) {
 						inventory.insertItem(22,filterStack.copy(),false);
 						filterStack.shrink(1);
-						inputType = type;
+						inputTypeNc = type;
 						if (tankNc0.getFluid() != null) {
 							if (!type.getFF().equals(tankNc0.getFluid().getFluid()))
 								tankNc0.drain(9999,true);
@@ -257,8 +257,8 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 				}
 				tryProvide(tankNc1,world,pos.offset(facing,2).offset(facing.rotateY().getOpposite()),ForgeDirection.getOrientation(facing.rotateY().getOpposite()));
 				tryProvide(tankNc1,world,pos.offset(facing,2).offset(facing.rotateY(),2),ForgeDirection.getOrientation(facing.rotateY()));
-				trySubscribe(tankNc0,new FluidStack(inputType.getFF(),0),world,pos.offset(facing.getOpposite()),ForgeDirection.getOrientation(facing.getOpposite()));
-				trySubscribe(tankNc0,new FluidStack(inputType.getFF(),0),world,pos.offset(facing.rotateY()).offset(facing.getOpposite()),ForgeDirection.getOrientation(facing.getOpposite()));
+				trySubscribe(tankNc0,new FluidStack(inputTypeNc.getFF(),0),world,pos.offset(facing.getOpposite()),ForgeDirection.getOrientation(facing.getOpposite()));
+				trySubscribe(tankNc0,new FluidStack(inputTypeNc.getFF(),0),world,pos.offset(facing.rotateY()).offset(facing.getOpposite()),ForgeDirection.getOrientation(facing.getOpposite()));
 				//fillFluid(pos.offset(facing,2).offset(facing.rotateY(),-1),tankNc1);
 				//fillFluid(pos.offset(facing,2).offset(facing.rotateY(),2),tankNc1);
 			}
@@ -268,9 +268,20 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 					.__write(2,progress)
 					.__write(6,tankNc0.writeToNBT(new NBTTagCompound()))
 					.__write(7,tankNc1.writeToNBT(new NBTTagCompound()))
-					.__write(8,inputType.getID())
+					.__write(8,inputTypeNc.getID())
 					.__sendToAffectedClients();
 			markChanged();
+		} else {
+			if (mixerRot == -1)
+				mixerRot = world.rand.nextFloat()*360;
+			prevRot = mixerRot;
+			if (progress > 0) {
+				this.mixerRot += 9F;
+				if (this.mixerRot >= 360F) {
+					this.mixerRot -= 360F;
+					this.prevRot -= 360F;
+				}
+			}
 		}
 	}
 
@@ -296,7 +307,7 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		nuclearMode = compound.getBoolean("nuclear");
-		inputType = Fluids.fromID(compound.getInteger("filter"));
+		inputTypeNc = Fluids.fromID(compound.getInteger("filter"));
 		tankNc0.readFromNBT(compound.getCompoundTag("tankNc0"));
 		tankNc1.readFromNBT(compound.getCompoundTag("tankNc1"));
 		progress = compound.getInteger("progress");
@@ -304,7 +315,7 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 	@Override
 	public @NotNull NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setBoolean("nuclear",nuclearMode);
-		compound.setInteger("filter",inputType.getID());
+		compound.setInteger("filter",inputTypeNc.getID());
 		compound.setTag("tankNc0",tankNc0.writeToNBT(new NBTTagCompound()));
 		compound.setTag("tankNc1",tankNc1.writeToNBT(new NBTTagCompound()));
 		compound.setInteger("progress",progress);
@@ -330,7 +341,7 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 				tankNc1.readFromNBT((NBTTagCompound)value);
 				break;
 			case 8:
-				inputType = Fluids.fromID((int)value);
+				inputTypeNc = Fluids.fromID((int)value);
 				break;
 		}
 	}

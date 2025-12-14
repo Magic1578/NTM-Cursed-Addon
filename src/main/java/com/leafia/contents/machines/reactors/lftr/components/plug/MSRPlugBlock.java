@@ -3,6 +3,8 @@ package com.leafia.contents.machines.reactors.lftr.components.plug;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.BlockMachineBase;
+import com.hbm.handler.radiation.RadiationSystemNT;
+import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.util.I18nUtil;
@@ -10,8 +12,10 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.fluids.traits.FT_LFTRCoolant;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityTEBase;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,16 +28,36 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay {
+public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay, IRadResistantBlock {
 	public MSRPlugBlock(Material materialIn,String s) {
 		super(materialIn,0,s);
 		ModBlocks.ALL_BLOCKS.remove(this);
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
+
+	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		super.onBlockAdded(worldIn, pos, state);
+	}
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		super.breakBlock(worldIn, pos, state);
+	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addModular(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
+		tooltip.add("§2[" + I18nUtil.resolveKey("trait.radshield") + "]");
+	}
+
 	@Override
 	public TileEntity createNewTileEntity(World worldIn,int meta) {
 		return new MSRPlugTE();

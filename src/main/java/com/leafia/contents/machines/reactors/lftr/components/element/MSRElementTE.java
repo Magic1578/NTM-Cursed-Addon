@@ -1,8 +1,10 @@
 package com.leafia.contents.machines.reactors.lftr.components.element;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.util.Tuple.Pair;
+import com.leafia.contents.AddonFluids;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
@@ -56,9 +58,9 @@ public class MSRElementTE extends MSRTEBase {
 				new Item[]{},
 				new String[]{OreDictManager.U233.nugget()},
 				"(x×3)^0.6/B",
-				(x)->Math.pow(x*3,0.65)//,
-				//600000000d,
-				//MSRByproduct.u233
+				(x)->Math.pow(x*3,0.65),
+				600000000d,
+				MSRByproduct.u233
 		),
 		u235(
 				new Item[]{},
@@ -150,12 +152,12 @@ public class MSRElementTE extends MSRTEBase {
 					if (mix <= 0) continue;
 					try {
 						MSRFuel type = MSRFuel.valueOf(entry.getKey());
-						double tempAdd = type.function.apply(nbtProtocol(stack1.tag).getDouble("heat")+baseTemperature)*mix*B;
+						double tempAdd = type.function.apply(nbtProtocol(stack1.tag).getDouble("heat")+getBaseTemperature(AddonFluids.fromFF(stack0.getFluid())))*mix*B;
 						y += tempAdd;
 						if (type.byproduct != null) {
 							double addAmt = tempAdd/type.life;
 							for (Pair<String,Double> byproduct : type.byproduct.byproducts)
-								addMixture(mixture,byproduct.getKey(),mix*addAmt/type.byproduct.division);
+								addMixture(mixture,byproduct.getKey(),/*mix* what was my peanut brain cooking while i was coding ts*/addAmt/type.byproduct.division);
 							double perc = mix-addAmt;
 							mixture.put(entry.getKey(),perc);
 							if (perc <= 0)

@@ -14,6 +14,7 @@ import com.leafia.init.*;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.proxy.LeafiaServerProxy;
 import com.leafia.init.recipes.AddonChemplantRecipes;
+import com.leafia.overwrite_contents.asm.TransformerCoreLeafia;
 import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
@@ -105,6 +106,8 @@ public class AddonBase {
 		LCEItemCatalyst.registerMeltingPoints();
 
 		AddonFluidTraits.preInit();
+		if (TransformerCoreLeafia.loadFailed != null)
+			TransformerCoreLeafia.loadFailed.run();
 	}
 
 	@SubscribeEvent
@@ -129,6 +132,8 @@ public class AddonBase {
 	public void init(FMLInitializationEvent event) {
 		AddonHazards.register();
 		AddonNodesRegister.register();
+		if (TransformerCoreLeafia.loadFailed != null)
+			TransformerCoreLeafia.loadFailed.run();
 	}
 
 	@EventHandler
@@ -136,11 +141,15 @@ public class AddonBase {
 	public void postInit(FMLPostInitializationEvent event) {
 		AddonFF.setFromRegistry();
 		AddonChemplantRecipes.register();
+		if (TransformerCoreLeafia.loadFailed != null)
+			TransformerCoreLeafia.loadFailed.run();
 	}
 
 	@EventHandler
 	public void fMLLoadCompleteEvent(FMLLoadCompleteEvent evt){
 		proxy.onLoadComplete(evt);
+		if (TransformerCoreLeafia.loadFailed != null)
+			TransformerCoreLeafia.loadFailed.run();
         /*
         FluidTankNTM tankNTM = new FluidTankNTM(Fluids.CRYOGEL,1000);
         NBTTagCompound nbt = new NBTTagCompound();

@@ -26,6 +26,7 @@ import com.leafia.contents.network.ff_duct.FFDuctStandard;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import com.leafia.dev.machine.MachineTooltip;
 import com.leafia.init.ItemRendererInit;
 import com.leafia.init.ResourceInit;
 import com.leafia.passive.LeafiaPassiveLocal;
@@ -62,6 +63,7 @@ import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -172,6 +174,10 @@ public class LeafiaClientListener {
 		}
 	}
 	public static class HandlerClient {
+		/// For calls before addInformation, see com.leafia.dev.machine.MachineTooltip.addInfoASM()
+		@SubscribeEvent
+		public void drawTooltip(ItemTooltipEvent event) {
+		}
 		@SubscribeEvent
 		public void modelBaking(ModelBakeEvent evt) {
 			IRegistry<ModelResourceLocation,IBakedModel> reg = evt.getModelRegistry();
