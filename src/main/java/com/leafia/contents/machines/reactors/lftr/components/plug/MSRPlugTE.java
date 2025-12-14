@@ -162,7 +162,7 @@ public class MSRPlugTE extends MSRTEBase implements IFluidHandler, IFFReceiver {
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
 		molten = compound.getBoolean("molten");
-		setType(Fluids.fromID(compound.getInteger("filter")));
+		inputType = Fluids.fromID(compound.getInteger("filter"));
 	}
 
 	@Override

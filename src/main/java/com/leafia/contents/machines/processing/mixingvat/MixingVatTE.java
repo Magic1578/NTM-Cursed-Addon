@@ -31,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -348,5 +349,21 @@ public class MixingVatTE extends LCETileEntityMachineBase implements LeafiaPacke
 	@Override
 	public FluidTank getCorrespondingTank(FluidStack stack) {
 		return tankNc0;
+	}
+
+	AxisAlignedBB bb = null;
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		if(bb == null) {
+			bb = new AxisAlignedBB(
+					pos.getX() - 2,
+					pos.getY(),
+					pos.getZ() - 2,
+					pos.getX() + 3,
+					pos.getY() + 2,
+					pos.getZ() + 3
+			);
+		}
+		return bb;
 	}
 }

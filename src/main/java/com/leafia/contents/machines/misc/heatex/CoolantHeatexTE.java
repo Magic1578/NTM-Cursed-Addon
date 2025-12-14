@@ -33,6 +33,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -270,6 +271,22 @@ public class CoolantHeatexTE extends TileEntityMachineBase implements ITickable,
 				}
 			}
 		}
+	}
+
+	AxisAlignedBB bb = null;
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		if(bb == null) {
+			bb = new AxisAlignedBB(
+					pos.getX() - 3,
+					pos.getY(),
+					pos.getZ() - 3,
+					pos.getX() + 4,
+					pos.getY() + 3,
+					pos.getZ() + 4
+			);
+		}
+		return bb;
 	}
 
 	static FT_Heatable virtualft_air = new FT_Heatable().addStep(50,2,AddonFluids.HOT_AIR,3).setEff(HeatingType.BOILER, 1.0D);

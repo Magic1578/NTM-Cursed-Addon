@@ -31,10 +31,6 @@ public class MixingVatRender extends TileEntitySpecialRenderer<MixingVatTE> {
 			return mdl;
 		}
 	}
-	@Override
-	public boolean isGlobalRenderer(MixingVatTE te) {
-		return true;
-	}
 	static final ResourceLocation rsc = new ResourceLocation("leafia","textures/models/xenoulexi/mixingvat_fluid.png");
 	@Override
 	public void render(MixingVatTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {

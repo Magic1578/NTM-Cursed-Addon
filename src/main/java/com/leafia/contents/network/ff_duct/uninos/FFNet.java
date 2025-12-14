@@ -3,12 +3,15 @@ package com.leafia.contents.network.ff_duct.uninos;
 import com.hbm.uninos.INetworkProvider;
 import com.hbm.uninos.NodeNet;
 import com.leafia.contents.network.FFNBT;
+import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.passive.LeafiaPassiveServer;
 import com.llib.exceptions.LeafiaDevFlaw;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 
 import java.util.*;
@@ -72,8 +75,20 @@ public class FFNet extends NodeNet<IFFReceiver,IFFProvider,FFNode,FFNet> {
 							FluidTank receiving = rec.getCorrespondingTank(tank.getFluid());
 							int demand = receiving.getCapacity()-receiving.getFluidAmount();
 							float ratio = demand/(float)totalDemand;
-							int toTransfer = Math.min(demand,(int)(totalAmt*ratio)); // just to be safe
+							int toTransfer = Math.min(demand,(int)Math.ceil(totalAmt*ratio)); // just to be safe
 							if (toTransfer > 0) {
+								if (prov instanceof TileEntity te) {
+									if (te.getWorld() != null) {
+										World world = te.getWorld();
+										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0x00FFFF,"PROVIDING",toTransfer+"mB");
+									}
+								}
+								if (rec instanceof TileEntity te) {
+									if (te.getWorld() != null) {
+										World world = te.getWorld();
+										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0xFF00FF,"RECEIVING",toTransfer+"mB");
+									}
+								}
 								// at this point, transferring is confirmed, no turning back
 								int sent = LeafiaUtil.fillFF(tank,receiving,toTransfer);
 								if (sent != toTransfer)

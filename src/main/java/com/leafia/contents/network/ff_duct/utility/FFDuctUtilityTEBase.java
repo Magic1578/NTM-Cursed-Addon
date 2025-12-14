@@ -23,7 +23,7 @@ public abstract class FFDuctUtilityTEBase extends TileEntity implements LeafiaPa
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		setType(Fluids.fromID(compound.getInteger("fluid")));
+		type = Fluids.fromID(compound.getInteger("fluid"));
 	}
 
 	@Override
