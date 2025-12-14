@@ -47,29 +47,31 @@ public class FFPumpTE extends FFDuctUtilityTEBase implements ITickable, IFluidHa
 
 	void doUpdate() {
 		if (getType().getFF() == null) return;
-		IBlockState state = world.getBlockState(pos);
-		if (state.getBlock() instanceof FFPumpBlock) {
-			EnumFacing facing = state.getValue(FFDuctUtilityBase.FACING);
-			TileEntity behind = world.getTileEntity(pos.offset(facing,-1));
-			if (behind != null && !(behind instanceof FFDuctUtilityTEBase)) {
-				if (behind.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing)) {
-					IFluidHandler handler = behind.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing);
-					FluidStack stack = new FluidStack(getType().getFF(),tank.getCapacity()-tank.getFluidAmount());
-					if (tank.fill(handler.drain(stack,false),false) > 0)
-						tank.fill(handler.drain(stack,true),true);
-					tryProvide(tank,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
-					return;
+		if (!world.isRemote) {
+			IBlockState state = world.getBlockState(pos);
+			if (state.getBlock() instanceof FFPumpBlock) {
+				EnumFacing facing = state.getValue(FFDuctUtilityBase.FACING);
+				TileEntity behind = world.getTileEntity(pos.offset(facing,-1));
+				if (behind != null && !(behind instanceof FFDuctUtilityTEBase)) {
+					if (behind.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing)) {
+						IFluidHandler handler = behind.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing);
+						FluidStack stack = new FluidStack(getType().getFF(),tank.getCapacity()-tank.getFluidAmount());
+						if (tank.fill(handler.drain(stack,false),false) > 0)
+							tank.fill(handler.drain(stack,true),true);
+						tryProvide(tank,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
+						return;
+					}
 				}
-			}
-			TileEntity ahead = world.getTileEntity(pos.offset(facing));
-			if (ahead != null && !(ahead instanceof FFDuctUtilityTEBase)) {
-				if (ahead.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing.getOpposite())) {
-					IFluidHandler handler = ahead.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing.getOpposite());
-					tank.drain(handler.fill(tank.getFluid(),true),true);
-					if (tank.getFluidAmount() > 0)
-						tryProvide(tank,world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
-					else
-						trySubscribe(tank,new FluidStack(getType().getFF(),0),world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
+				TileEntity ahead = world.getTileEntity(pos.offset(facing));
+				if (ahead != null && !(ahead instanceof FFDuctUtilityTEBase)) {
+					if (ahead.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing.getOpposite())) {
+						IFluidHandler handler = ahead.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing.getOpposite());
+						tank.drain(handler.fill(tank.getFluid(),true),true);
+						if (tank.getFluidAmount() > 0)
+							tryProvide(tank,world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
+						else
+							trySubscribe(tank,new FluidStack(getType().getFF(),0),world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
+					}
 				}
 			}
 		}

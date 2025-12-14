@@ -355,7 +355,8 @@ public class CoolantHeatexTE extends TileEntityMachineBase implements ITickable,
 				NBTTagCompound compound = MSRTEBase.nbtProtocol(stack.tag);
 				double h = compound.getDouble("heat");
 				compound.setDouble("heat",0);
-				heat = (int)(h*8);
+				heat = (int)(h
+				);
 				stack.tag = compound;
 				stack1 = stack;
 			} else return;
