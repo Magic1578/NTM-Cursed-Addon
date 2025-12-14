@@ -58,6 +58,18 @@ public class FFNet extends NodeNet<IFFReceiver,IFFProvider,FFNode,FFNet> {
 								recIt.remove();
 								continue;
 							}
+							if (prov instanceof TileEntity te) {
+								if (te.getWorld() != null) {
+									World world = te.getWorld();
+									LeafiaDebug.debugPos(world,te.getPos(),0.05f,0x00FFFF,"PROVIDER","","REGISTERED");
+								}
+							}
+							if (rec instanceof TileEntity te) {
+								if (te.getWorld() != null) {
+									World world = te.getWorld();
+									LeafiaDebug.debugPos(world,te.getPos(),0.05f,0xFF00FF,"RECEIVER","","REGISTERED");
+								}
+							}
 							FluidTank receiving = rec.getCorrespondingTank(tank.getFluid());
 							if (receiving == null) continue;
 							if (receiving.equals(tank)) continue;
@@ -80,13 +92,13 @@ public class FFNet extends NodeNet<IFFReceiver,IFFProvider,FFNode,FFNet> {
 								if (prov instanceof TileEntity te) {
 									if (te.getWorld() != null) {
 										World world = te.getWorld();
-										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0x00FFFF,"PROVIDING",toTransfer+"mB");
+										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0x00FFFF,"PROVIDER",toTransfer+"mB","");
 									}
 								}
 								if (rec instanceof TileEntity te) {
 									if (te.getWorld() != null) {
 										World world = te.getWorld();
-										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0xFF00FF,"RECEIVING",toTransfer+"mB");
+										LeafiaDebug.debugPos(world,te.getPos(),0.05f,0xFF00FF,"RECEIVER",toTransfer+"mB","");
 									}
 								}
 								// at this point, transferring is confirmed, no turning back
