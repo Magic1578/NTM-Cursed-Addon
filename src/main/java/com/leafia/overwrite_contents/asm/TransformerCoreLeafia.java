@@ -1,6 +1,6 @@
 package com.leafia.overwrite_contents.asm;
 
-import com.hbm.core.MinecraftClassWriter;
+//import com.hbm.core.MinecraftClassWriter;
 import com.leafia.contents.worldgen.biomes.effects.HasAcidicRain;
 import com.leafia.dev.machine.MachineTooltip;
 import com.leafia.passive.LeafiaPassiveServer;
@@ -8,6 +8,7 @@ import com.leafia.transformer.LeafiaGeneralLocal;
 import com.leafia.transformer.WorldServerLeafia;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import org.objectweb.asm.ClassReader;
@@ -22,6 +23,44 @@ import java.util.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public class TransformerCoreLeafia implements IClassTransformer {
+	/// Copied from community edition, because without this being integrated into the addon it
+	/// crashes without warning message when the addon is started without CE
+	public static class MinecraftClassWriterCopied extends ClassWriter {
+		public MinecraftClassWriterCopied(int flags) {
+			super(flags);
+		}
+
+		public MinecraftClassWriterCopied(ClassReader classReader, int flags) {
+			super(classReader, flags);
+		}
+
+		protected String getCommonSuperClass(String type1, String type2) {
+			ClassLoader classLoader = Launch.classLoader;
+
+			Class<?> c;
+			Class<?> d;
+			try {
+				c = Class.forName(type1.replace('/', '.'), false, classLoader);
+				d = Class.forName(type2.replace('/', '.'), false, classLoader);
+			} catch (Exception e) {
+				throw new RuntimeException(e.toString());
+			}
+
+			if (c.isAssignableFrom(d)) {
+				return type1;
+			} else if (d.isAssignableFrom(c)) {
+				return type2;
+			} else if (!c.isInterface() && !d.isInterface()) {
+				do {
+					c = c.getSuperclass();
+				} while(!c.isAssignableFrom(d));
+
+				return c.getName().replace('.', '/');
+			} else {
+				return "java/lang/Object";
+			}
+		}
+	}
 	public static Runnable loadFailed = null;
 	// fuck you in particular
 	public static final String[] classesBeingTransformed = {
@@ -111,7 +150,7 @@ public class TransformerCoreLeafia implements IClassTransformer {
 				}
 			}
 
-			ClassWriter classWriter = new MinecraftClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+			ClassWriter classWriter = new MinecraftClassWriterCopied(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 			classNode.accept(classWriter);
 			System.out.println("#Leaf: Transform Complete: " + name + " ("+classBeingTransformed.length+" -> "+classWriter.toByteArray().length+")");
 			return classWriter.toByteArray();

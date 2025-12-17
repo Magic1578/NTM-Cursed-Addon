@@ -338,15 +338,6 @@ public class AmatDuctStandard extends AmatDuctBase implements IDynamicModels, IL
 	}
 
 	@Override
-	public void getSubBlocks(CreativeTabs tab,NonNullList<ItemStack> items) {
-		if (tab == CreativeTabs.SEARCH || tab == this.getCreativeTab()) {
-			for (int i = 0; i < 3; ++i) {
-				items.add(new ItemStack(this, 1, i));
-			}
-		}
-	}
-
-	@Override
 	public ItemStack getPickBlock(IBlockState state,RayTraceResult target,World world,BlockPos pos,EntityPlayer player) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity instanceof TileEntityPipeBaseNT) {
