@@ -22,6 +22,7 @@ import com.leafia.contents.machines.reactors.pwr.blocks.components.terminal.PWRT
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreckEntity;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.utility.pump.FFPumpTE;
+import com.leafia.contents.network.pipe_amat.AmatDuctTE;
 import com.leafia.contents.network.spk_cable.SPKCableTE;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -54,6 +55,7 @@ public class TEInit {
 		register(PWRPortTE.class,"lwr_port_te");
 		register(PWRTerminalTE.class,"lwr_terminal_te");
 		register(PWRMeshedWreckEntity.class,"lwr_wreck_te");
+		register(AmatDuctTE.class,"pipe_amat_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

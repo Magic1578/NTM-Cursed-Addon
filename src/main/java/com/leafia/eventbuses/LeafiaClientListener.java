@@ -24,6 +24,7 @@ import com.leafia.contents.gear.utility.FuzzyIdentifierBakedModel;
 import com.leafia.contents.gear.utility.FuzzyIdentifierRender;
 import com.leafia.contents.gear.utility.ItemFuzzyIdentifier;
 import com.leafia.contents.network.ff_duct.FFDuctStandard;
+import com.leafia.contents.network.pipe_amat.AmatDuctStandard;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
@@ -206,6 +207,7 @@ public class LeafiaClientListener {
 		@SubscribeEvent
 		public void blockColorsEvent(ColorHandlerEvent.Block evt) {
 			FFDuctStandard.registerColorHandler(evt);
+			AmatDuctStandard.registerColorHandler(evt);
 		}
 
 		private void registerModel(Item item,int meta) {
