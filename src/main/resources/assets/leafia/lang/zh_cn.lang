@@ -1,31 +1,86 @@
 # Leafia's Cursed Addon 中文简体语言文件
 
 # 容器名称
+container.coolant_heatex=冷却液热交换器
 container.dfcEmitter=DFC 发射器
 container.dfcReceiver=DFC 接收器
 
+# 化学反应
+chem.leafia.flibe=液态氟化物生产
+chem.leafia.fluorine=萤石电解
+
 # 死亡消息
 death.attack.back=%1$s 被原子化并传送到了后室
+death.attack.drinkacid=%1$s 摄入了致命的酸性物质
+death.attack.drinkcryo=%1$s 的内脏被冻结
+death.attack.drinkhot=%1$s 摄入了致命的高温物质
 death.attack.fleija=%1$s 在真空环境中肺部爆炸而亡
 death.attack.dfc=%1$s 被强烈的高能辐射烧成灰烬
 death.attack.dfcMeltdown=%1$s 在坍缩恒星的超高温中被蒸发
 death.attack.mine=%1$s 应该多注意脚下的地面
 death.attack.pointed=%1$s 被尖锐物品撕裂
+death.attack.poison=%1$s 中了致命的毒
 
 # 描述文本
+desc.leafia._repeated.reactors.compression=蒸汽压缩开关$ 当前压缩等级: %sx
+desc.leafia._repeated.reactors.controlrods=控制棒: %s%%
+desc.leafia._repeated.reactors.off=反应堆已关闭
+desc.leafia._repeated.reactors.on=反应堆已启动
+desc.leafia._repeated.reactors.require.properly=§c错误:§r 反应堆正常运行需要 %s!
+desc.leafia._repeated.reactors.temp.core=§e核心温度:§r$   %s§e°C§r
+desc.leafia._repeated.reactors.temp.hull=§6外壳温度:§r$   %s§6°C§r
+desc.leafia._short.fluid.co2=CO₂
 desc.leafia.fuzzy.howto=点击任何支持的GUI中的流体储罐进行配置！
 desc.leafia.fuzzy.set=标识符设置为：
 desc.leafia.fuzzy.unset=未设置任何流体！
+desc.leafia.zirnox.pressure=§d压力:§r$   %s§datm§r
+desc.leafia.zirnox.tips.coolant=§3冷却液§r$ 二氧化碳将燃料的热量传递到反应堆外壳。$ 冷却效率受压力影响很大。$ 反应堆本身不会消耗二氧化碳。$§9给水§r$ 外壳的热量用于将给水煮沸成蒸汽。$ 储罐中的水越少，外壳冷却和蒸汽产生的速度就越慢。
+desc.leafia.zirnox.tips.pressure=§d压力§r$ 可以通过排放二氧化碳来降低压力。$ 然而，压力过低会降低冷却$效率和蒸汽产量。$ 注意防止熔毁！
+desc.leafia.zirnox.vent=排放冷却剂二氧化碳
 desc.lens.fieldmodifier=力场修改器：
 desc.lens.energymodifier=核心能量修改器：
 desc.lens.powdrainmodifier=能量消耗修改器：
 
 # GUI界面
+gui.coolant_heatex.coolant=冷却液类型开关$ 当前冷却液类型: %s
+gui.coolant_heatex.ntmfswitch.desc.ff=FF - 使用特殊管道连接。
+gui.coolant_heatex.ntmfswitch.desc.ntmf=NTMF - 使用标准导管连接。
+gui.coolant_heatex.ntmfswitch.title=输入流体兼容性
+gui.coolant_heatex.ntmfswitch=当前为 %s 模式
+gui.desc.voidcontents=虚空内容物
+gui.digamma_message.0=我为何存在？
+gui.digamma_message.1=我做了什么？
+gui.digamma_message.2=生活在这样的世界里...
+gui.digamma_message.3=意义何在？
+gui.digamma_message.4=踏入深渊
+gui.digamma_message.5=凝视深渊
+gui.digamma_message.6=那些声音...
+gui.digamma_message.7=我无法承受这一切
+gui.digamma_message.8=崇拜我
+gui.digamma_message.9=这太痛苦了...
 gui.heatex.amount=每周期数量
 gui.heatex.cycle=周期延迟（刻）
+gui.recipe.inputMix=输入混合物
 
 # 流体名称
+hbmfluid.coolant_mal=§c沸腾的冷却液§r
+hbmfluid.deathsteam=§c超浓密蒸汽§r
+hbmfluid.flibe=液态氟化物
+hbmfluid.hot_air=热空气
+hbmfluid.hot_water=热水
+hbmfluid.radspice_slop=新维林浆糊
+hbmfluid.uf6_233=六氟化铀-233
+hbmfluid.uf6_235=六氟化铀-235
 hbmfluid.ultrahotsteam=超浓密蒸汽
+
+hbmpseudofluid.u233f6=六氟化铀-233
+hbmpseudofluid.leu233f6=低浓缩六氟化铀-233
+hbmpseudofluid.meu233f6=中浓缩六氟化铀-233
+hbmpseudofluid.heu233f6=高浓缩六氟化铀-233
+hbmpseudofluid.u235f6=六氟化铀-235
+hbmpseudofluid.leu235f6=低浓缩六氟化铀-235
+hbmpseudofluid.meu235f6=中浓缩六氟化铀-235
+hbmpseudofluid.heu235f6=高浓缩六氟化铀-235
 
 # 物品信息
 info.leafiarod.empty=空
@@ -42,7 +97,17 @@ item.fuzzy_identifier.message=标识符设置为 %s
 item.fuzzy_identifier.name=模糊标识符
 item.leafiarod=核燃料棒 "%s"
 item.leafiarodempty=核燃料棒组件
+item.lwrdebris.conjunctive.alt={type} of {block}
+item.lwrdebris.conjunctive.switch=of
+item.lwrdebris.conjunctive={block} {type}
+item.lwrdebris.piece=碎片
+item.lwrdebris.shard=碎块
+item.lwrdebris.shrapnel=弹片
+item.ntmfbottle.name=%s 瓶
 item.wand_v.name=可视化魔杖
+
+# 分离器
+separator.u233=氟化物盐U233提取
 
 # 音效字幕
 subtitles.weapon.nuke=核爆炸
@@ -51,7 +116,12 @@ subtitles.weapon.nuke_folkvangr=Fölkvangr 力场出现
 subtitles.weapon.nuke_n=核爆炸
 subtitles.weapon.nuke_s=小型核爆炸
 
-# 方块描述
+# 方块名称和描述
+tile.amat_duct_charger.name=电磁流体导管充能器
+tile.amat_duct.name=磁流体导管
+tile.amat_duct.power=电力: %s
+tile.amat_duct.warn=网络电力不会保存！$ 请始终保持充能器带电！
+tile.coolant_heatex.name=冷却液热交换器
 tile.crate_tungsten.desc=用于DFC箱子配方，不提供额外槽位
 tile.dfc_cemitter.name=创造模式DFC发射器
 tile.dfc_emitter.name=DFC发射器
@@ -59,13 +129,75 @@ tile.dfc_receiver.name=DFC接收器
 tile.dfc_reinforced.name=DFC强化接收器
 tile.dfc_stabilizer.desc=连接建立时也会获取核心状态
 tile.dfc_exchanger.name=DFC热交换器
+tile.ff_duct.name=特殊管道
+tile.ff_duct.desc=由于技术原因，仅支持模糊标识符
+tile.ff_converter.ff=FF: %s
+tile.ff_converter.name=特殊管道适配器
+tile.ff_converter.ntmf=NTMF: %s
+tile.ff_pump.name=特殊管道泵
+tile.ff_pump.buffer=缓冲: %s
 tile.letter_sign.name=大型标志 %s
+tile.lwr_casing.desc=§m需要覆盖所有内部部件才能形成反应堆$§m放置位置: 外壳§r$在NTM:LCE中这是可选的。真正重要的是是否有辐射屏蔽以及方块的爆炸抗性。
+tile.lwr_casing.name=压水堆压力容器
+tile.lwr_channel.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 放置位置: 靠近燃料棒
+tile.lwr_channel.name=压水堆冷却通道
+tile.lwr_conductor.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 使用加热的冷却液将水煮沸成蒸汽$ 放置位置: 靠近燃料棒$§c沸水堆..?§r
+tile.lwr_conductor.name=压水堆集成锅炉
+tile.lwr_control.desc=以可控方式限制中子通过$ 放置位置: 中子路径（基本在燃料棒之间）
+tile.lwr_control.name=压水堆控制棒
+tile.lwr_ejector.desc=§m从插入的废料棒中提取废料$ 目前无法工作！
+tile.lwr_ejector.name=压水堆燃料喷射器
+tile.lwr_element.desc=压水堆燃料槽$ 可通过检修舱口访问$ 可堆叠$ 放置位置: 网格，以增加反应性
+tile.lwr_element.name=压水堆燃料棒
+tile.lwr_exchanger.desc=增强燃料向冷却液的热传递$ 放置位置: 靠近燃料棒
+tile.lwr_exchanger.name=压水堆热交换器
+tile.lwr_heatsink.desc=核心热容量增加5%%$ 使冷却通道和热交换器的效率略微降低$ 放置位置: 任意
+tile.lwr_heatsink.name=压水堆散热器
+tile.lwr_inserter.desc=§m将有效的核燃料插入任何已插入的空核燃料组件$§m无法过滤$ 目前无法工作！
+tile.lwr_inserter.name=压水堆燃料插入器
+tile.lwr_port.desc=允许物品和流体IO$ 放置位置: 外壳
+tile.lwr_port.name=压水堆流体端口
+tile.lwr_reflector.desc=将中子反射回燃料棒$ 放置位置: 网格，以增加反应性$ 有效的外壳材料
+tile.lwr_reflector.name=压水堆中子反射器
+tile.lwr_relay.desc=基本上就是可连接到压水堆的OpenComputers红石I/O$ 适用于设置紧急警报$ 放置位置: 任意
+tile.lwr_relay.name=压水堆红石继电器
+tile.lwr_rs.desc=根据情况输出红石信号$ 适用于设置紧急警报$ 放置位置: 任意
+tile.lwr_rs.name=压水堆信号输出口
+tile.lwr_signal.desc=连接到OpenComputers线缆$ 放置位置: 任意
+tile.lwr_signal.name=压水堆控制端口
+tile.lwr_source.desc=§m为核心添加20通量$§m放置位置: 任意$§m只有当连接打开时，通量才能到达燃料棒$§e§o燃料棒上的热功能机制 §c§o确实是为了消除对中子源的需求§e§o以获得更好的灵活性。$§o是的，这个功能和这个方块绝对不会兼容。
+tile.lwr_source.name=压水堆中子源
+tile.lwr_terminal.desc=压水堆的访问终端$ 放置位置: 外壳
+tile.lwr_terminal.name=压水堆检修舱口
+tile.lwr_vent_element.desc=压水堆紧急冷却系统组件$ 当供应低温凝胶时，会快速冷却周围的燃料元件$ 一端需要供应商，另一端需要通风口$ 放置位置: 直线
+tile.lwr_vent_element.name=压水堆紧急冷却元件
+tile.lwr_vent_inlet.desc=压水堆紧急冷却系统组件$ 可以通过红石、终端GUI或OpenComputers程序发出信号$ 信号时将低温凝胶送入元件$ 放置位置: 紧急冷却元件的一端，朝外
+tile.lwr_vent_inlet.name=压水堆紧急冷却供应商
+tile.lwr_vent_outlet.desc=压水堆紧急冷却系统组件$ 冷却效率取决于其前方的方块，如果被阻挡则无法工作$ 放置位置: 紧急冷却元件的一端，朝外
+tile.lwr_vent_outlet.name=压水堆紧急冷却通风口
+tile.mixingvat.name=混合桶
+tile.msr_arbitrary.name=液态氟化物钍反应堆任意方块
+tile.msr_ejector.name=液态氟化物钍反应堆燃料喷射器
+tile.msr.fill=储罐: %s
+tile.msr.fuel.th232=Th232
+tile.msr.fuel.u233=U233
+tile.msr.fuel.u235=U235
+tile.msr.fuel.waste=废料
+tile.msr.mixture=混合物:
+tile.msr.status=状态
+tile.msr_control.insertion=插入深度: %sm
+tile.msr_control.name=液态氟化物钍反应堆控制棒
+tile.msr_control_extension.name=液态氟化物钍反应堆控制棒延伸段
+tile.msr_element.name=液态氟化物钍反应堆反应室
+tile.msr_element.restriction=限制: %s%%
+tile.msr_plug.molten=熔融
+tile.msr_plug.name=液态氟化物钍反应堆燃料塞
+tile.salt_separator.name=盐燃料分离装置
 tile.spk_cable.name=DFC重定向电缆
 
 # 特性和危险系统
 trait._hazardfluid.dfcFuel.desc=§d功率输出 §5%s%%
 trait._hazardfluid.dfcFuel=DFC燃料
-
 trait._hazarditem.radioactive.activation=污染：
 trait._hazarditem.radioactive.alpha=α阿尔法射线：
 trait._hazarditem.radioactive.beta=β贝塔射线：
@@ -73,10 +205,8 @@ trait._hazarditem.radioactive.gamma=γ伽马射线：
 trait._hazarditem.radioactive.neutrons=中子射线：
 trait._hazarditem.radioactive.radon=氡气：
 trait._hazarditem.radioactive.x=X射线：
-
 trait._hazarditem.sharp.add=冲击时额外伤害 +%s
 trait._hazarditem.sharp=锋利边缘
-
 trait._machine.condenser=冷凝器
 trait._machine.modular=模块化
 trait._machine.multiblock.core=核心组件
@@ -84,3 +214,6 @@ trait._machine.multiblock=多方块结构
 trait._machine.nuclear=核能
 trait._machine.power=发电机
 trait._machine.steam=热交换器
+trait.leafia.lftr=液态氟化物钍反应堆冷却液
+trait.leafia.lftr.multiplier=通量倍增器: %s
+trait.leafia.magnetic=磁性
